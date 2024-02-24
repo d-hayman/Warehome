@@ -9,6 +9,8 @@ class User < ApplicationRecord
 
   validates :password_confirmation, presence: true, on: :create
 
+  has_many :checkouts
+
   #for good measure because I can't stress how much email is not a thing for an internal service running on an intranet
   def email_required?
     false

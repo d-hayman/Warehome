@@ -7,6 +7,9 @@ class Container < ApplicationRecord
 
   has_many :containments
   has_many :items, through: :containments
+  has_many :checkouts, through: :containments
+
+  belongs_to :creator, class_name: "User", optional: true
 
   validates :name, presence: true
   validates :description, presence: true

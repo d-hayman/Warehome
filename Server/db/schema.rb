@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_23_022527) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_24_012018) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -44,6 +44,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_23_022527) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "creator_id"
+    t.index ["creator_id"], name: "index_categories_on_creator_id"
+  end
+
+  create_table "checkouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "containment_container_id", null: false
+    t.bigint "containment_item_id", null: false
+    t.integer "quantity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["containment_container_id", "containment_item_id"], name: "fk_rails_4fab865777"
+    t.index ["user_id"], name: "index_checkouts_on_user_id"
   end
 
   create_table "containers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -53,10 +66,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_23_022527) do
     t.bigint "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "creator_id"
+    t.index ["creator_id"], name: "index_containers_on_creator_id"
     t.index ["parent_id"], name: "index_containers_on_parent_id"
   end
 
-  create_table "containments", primary_key: ["item_id", "container_id"], charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "containments", primary_key: ["container_id", "item_id"], charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "item_id", null: false
     t.bigint "container_id", null: false
     t.integer "quantity"
@@ -72,6 +87,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_23_022527) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "creator_id"
+    t.index ["creator_id"], name: "index_items_on_creator_id"
     t.index ["description"], name: "ftDescription", type: :fulltext
   end
 
@@ -88,7 +105,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_23_022527) do
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "creator_id"
     t.index ["category_id"], name: "index_subcategories_on_category_id"
+    t.index ["creator_id"], name: "index_subcategories_on_creator_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -107,10 +126,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_23_022527) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categories", "users", column: "creator_id", on_delete: :nullify
+  add_foreign_key "checkouts", "containments", column: ["containment_container_id", "containment_item_id"], primary_key: ["container_id", "item_id"], on_delete: :cascade
+  add_foreign_key "checkouts", "users", on_delete: :cascade
   add_foreign_key "containers", "containers", column: "parent_id", on_delete: :nullify
+  add_foreign_key "containers", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "containments", "containers", on_delete: :cascade
   add_foreign_key "containments", "items", on_delete: :cascade
+  add_foreign_key "items", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "items_subcategories", "items", on_delete: :cascade
   add_foreign_key "items_subcategories", "subcategories", on_delete: :cascade
   add_foreign_key "subcategories", "categories"
+  add_foreign_key "subcategories", "users", column: "creator_id", on_delete: :nullify
 end
