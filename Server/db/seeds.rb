@@ -50,3 +50,9 @@
 ].each do |model, action|
     Permission.find_or_create_by(model: model, action: action)
 end
+
+adminRole = Role.find_or_create_by(name: "Admin")
+
+adminRole.permissions = Permission.all
+
+adminRole.save
