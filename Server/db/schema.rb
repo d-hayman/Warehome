@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_24_012018) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_25_011435) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -99,6 +99,35 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_012018) do
     t.index ["subcategory_id"], name: "index_items_subcategories_on_subcategory_id"
   end
 
+  create_table "permissions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "model"
+    t.string "action"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_permissions_on_action"
+    t.index ["model"], name: "index_permissions_on_model"
+  end
+
+  create_table "permissions_roles", primary_key: ["permission_id", "role_id"], charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "permission_id", null: false
+    t.bigint "role_id", null: false
+    t.index ["permission_id"], name: "index_permissions_roles_on_permission_id"
+    t.index ["role_id"], name: "index_permissions_roles_on_role_id"
+  end
+
+  create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "roles_users", primary_key: ["role_id", "user_id"], charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "role_id", null: false
+    t.bigint "user_id", null: false
+    t.index ["role_id"], name: "index_roles_users_on_role_id"
+    t.index ["user_id"], name: "index_roles_users_on_user_id"
+  end
+
   create_table "subcategories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -136,6 +165,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_24_012018) do
   add_foreign_key "items", "users", column: "creator_id", on_delete: :nullify
   add_foreign_key "items_subcategories", "items", on_delete: :cascade
   add_foreign_key "items_subcategories", "subcategories", on_delete: :cascade
+  add_foreign_key "permissions_roles", "permissions", on_delete: :cascade
+  add_foreign_key "permissions_roles", "roles", on_delete: :cascade
+  add_foreign_key "roles_users", "roles", on_delete: :cascade
+  add_foreign_key "roles_users", "users", on_delete: :cascade
   add_foreign_key "subcategories", "categories"
   add_foreign_key "subcategories", "users", column: "creator_id", on_delete: :nullify
 end

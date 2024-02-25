@@ -5,11 +5,13 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :rememberable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
 
+  has_and_belongs_to_many :roles
+
+  has_many :checkouts
+
   validates :username, uniqueness: true, length: { minimum: 4 }
 
   validates :password_confirmation, presence: true, on: :create
-
-  has_many :checkouts
 
   #for good measure because I can't stress how much email is not a thing for an internal service running on an intranet
   def email_required?
