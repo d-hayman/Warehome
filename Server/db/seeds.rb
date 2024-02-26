@@ -37,7 +37,6 @@
     ["AdminPanel", "view"],
     ["User", "index"],
     ["User", "show"],
-    ["User", "set_permissions"],
     ["Role", "index"],
     ["Role", "show"],
     ["Role", "create"],

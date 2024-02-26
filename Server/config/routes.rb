@@ -20,10 +20,35 @@ Rails.application.routes.draw do
   #API routes
   namespace :api do
     namespace :v1 do
+      scope module: 'containers' do
+        resources :containers, only: [:index, :show, :create, :update, :destroy] do
+          match "items/:id", to: "containers#add_item", via: [:put]
+          match "items/:id", to: "containers#remove_item", via: [:delete]
+          post "items/:item_id/checkout", to: "checkouts#create"
+          delete "items/:item_id/checkout/:id", to: "checkouts#destroy"
+        end
+      end
+
+      scope module: 'items' do
+        resources :items, only: [:index, :show, :create, :update, :destroy] do
+          match "subcategories/:id", to: "items#add_subcategory", via: [:put]
+          match "subcategories/:id", to: "items#remove_subcategory", via: [:delete]
+        end
+      end
+
       scope module: 'categories' do
         resources :categories, only: [:index, :show, :create, :update, :destroy] do 
           resources :subcategories, only: [:index, :show, :create, :update, :destroy]
         end
+      end
+
+      scope module: 'users' do
+        resources :users, only: [:index, :show]
+      end
+
+      scope module: 'roles' do
+        resources :roles, only: [:index, :show, :create, :update, :destroy]
+        resources :permissions, only: [:index, :show]
       end
     end
   end
