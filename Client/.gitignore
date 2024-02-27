@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Env files are created as needed where things are deployed
+.env
+.env.development
+
+# Coverage directory is all generated at runtime
+coverage

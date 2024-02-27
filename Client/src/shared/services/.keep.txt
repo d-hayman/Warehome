@@ -1,0 +1,1 @@
+model.service.ts files for each API endpoint

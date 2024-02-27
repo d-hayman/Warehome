@@ -1,0 +1,3 @@
+PageName.module.css for a given page. Reference as import styles from '../../assets/styles/PageName.module.css';
+
+className={styles.class_name}
