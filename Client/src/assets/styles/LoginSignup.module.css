@@ -1,0 +1,18 @@
+.form_box {
+    padding: 2rem;
+    text-align: right;
+    max-width: 400px;
+}
+
+.form_box div {
+    text-align: left;
+}
+
+.form_title {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.submit_button {
+    margin-top: 1.5rem;
+}

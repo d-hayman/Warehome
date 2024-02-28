@@ -1,4 +1,7 @@
 /**
+ * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
+ */
+/**
  * Class for representing permission records
  */
 class PermissionModel {
