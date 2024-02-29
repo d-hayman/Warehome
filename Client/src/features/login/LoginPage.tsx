@@ -73,7 +73,7 @@ function LoginPage(){
             if (success) {
                 setLoggedInAs(username);
             } else {
-                setErrorAlertBody("Incorrect username or password");
+                setErrorAlertBody({error:"Incorrect username or password"});
                 setShowErrorAlert(true);
             }
         } catch (e) {
@@ -81,7 +81,8 @@ function LoginPage(){
         }
     };
     
-    return (<>
+    return (
+    <div className={styles.form_outer}>
         <Paper className={styles.form_box}>
             { showErrorAlert &&
                 <Alert variant="danger" onClose={() => setShowErrorAlert(false)} dismissible>
@@ -117,7 +118,7 @@ function LoginPage(){
                 </Button>
             </Form>
         </Paper>
-    </>)
+    </div>)
 }
 
 export default LoginPage

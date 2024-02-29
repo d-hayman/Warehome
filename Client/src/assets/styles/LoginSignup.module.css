@@ -1,7 +1,14 @@
+.form_outer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
 .form_box {
     padding: 2rem;
     text-align: right;
     max-width: 400px;
+    margin-block: auto;
 }
 
 .form_box div {

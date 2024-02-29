@@ -68,7 +68,8 @@ function SignupPage(){
         }
     };
 
-    return (<>
+    return (
+    <div className={styles.form_outer}>
         <Paper className={styles.form_box}>
             { showErrorAlert &&
                 <Alert variant="danger" onClose={() => setShowErrorAlert(false)} dismissible>
@@ -117,7 +118,7 @@ function SignupPage(){
                 </Button>
             </Form>
         </Paper>
-    </>)
+    </div>)
 }
 
 export default SignupPage;

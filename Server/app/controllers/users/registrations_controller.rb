@@ -16,8 +16,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /resource
   def create
     super
-    role = Role.first
-    role.users << current_user
+    unless current_user.nil?
+      role = Role.first
+      role.users << current_user
+    end
   end
 
   # GET /resource/edit
