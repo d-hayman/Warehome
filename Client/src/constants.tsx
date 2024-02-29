@@ -1,3 +1,8 @@
+export const HASUSERS_API_URL =
+    process.env.NODE_ENV === "test"
+        ? "http://mocked-api-url"
+        : import.meta.env.VITE_HASUSERS_API_URL;
+        
 export const LOGIN_API_URL = 
     process.env.NODE_ENV === "test" 
         ? "http://mocked-api-url" 

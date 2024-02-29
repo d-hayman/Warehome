@@ -8,21 +8,40 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from '../../assets/styles/LoginSignup.module.css';
 import { login } from "../../shared/services/auth.service";
 import { useNavigate } from "react-router-dom";
+import { hasUsers } from "../../shared/services/utils.service";
+import { listifyErrors } from "../../shared/utils/responseHelpers";
 
 /**
  * Login form component
  * @returns JSX.Element for the login form
  */
 function LoginPage(){
-    const [hasUsers, setHasUsers] = useState(true);
     const [loggedInAs, setLoggedInAs] = useState(localStorage.getItem("loggedInAs")??'');
+
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [errorAlertBody, setErrorAlertBody] = useState<any>({});
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [invalidLogin, setInvalidLogin] = useState(false);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkUsers = async () => {
+            try{
+                let _hasUsers = await hasUsers();
+                if(!_hasUsers){
+                    navigate("/signup");
+                }
+            } catch(e){
+                setErrorAlertBody({error: `${e}`});
+                setShowErrorAlert(true);
+            }
+        }
+
+        checkUsers();
+    }, [])
 
     //redirect effect for login or if signup is needed
     useEffect(() => {
@@ -32,17 +51,13 @@ function LoginPage(){
          * B) The current user is already logged in
          */
         const handleRedirect = () => {
-            if(!hasUsers){
-                navigate("/signup");
-            }
-
             if(loggedInAs.length > 0){
                 navigate("/dashboard")
             }
         }
 
         handleRedirect();
-    }, [loggedInAs, hasUsers])
+    }, [loggedInAs])
 
     /**
      * handles the login action
@@ -58,7 +73,8 @@ function LoginPage(){
             if (success) {
                 setLoggedInAs(username);
             } else {
-                setInvalidLogin(true);
+                setErrorAlertBody("Incorrect username or password");
+                setShowErrorAlert(true);
             }
         } catch (e) {
             console.error("Failed to login: ", e);
@@ -67,10 +83,10 @@ function LoginPage(){
     
     return (<>
         <Paper className={styles.form_box}>
-            { invalidLogin &&
-                <Alert variant="danger" onClose={() => setInvalidLogin(false)} dismissible>
+            { showErrorAlert &&
+                <Alert variant="danger" onClose={() => setShowErrorAlert(false)} dismissible>
                     <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
-                    Incorrect username or password
+                    <ul>{listifyErrors(errorAlertBody)}</ul>
                 </Alert>}
             <h1 className={styles.form_title}>WAREHOME</h1>
             <Form onSubmit={doLogin}>

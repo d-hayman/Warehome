@@ -3,13 +3,14 @@
  */
 
 import { Paper } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, Form, InputGroup } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from '../../assets/styles/LoginSignup.module.css';
 import { signup } from "../../shared/services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { listifyErrors } from "../../shared/utils/responseHelpers";
+import { hasUsers } from "../../shared/services/utils.service";
 
 /**
  * 
@@ -25,6 +26,22 @@ function SignupPage(){
     const [errorAlertBody, setErrorAlertBody] = useState<any>({});
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkUsers = async () => {
+            try{
+                let _hasUsers = await hasUsers();
+                if(_hasUsers){
+                    navigate("/");
+                }
+            } catch(e){
+                setErrorAlertBody({error: `${e}`});
+                setShowErrorAlert(true);
+            }
+        }
+
+        checkUsers();
+    }, [])
 
     /**
      * 

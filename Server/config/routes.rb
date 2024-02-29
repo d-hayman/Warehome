@@ -20,6 +20,11 @@ Rails.application.routes.draw do
   #API routes
   namespace :api do
     namespace :v1 do
+
+      namespace :utils do
+        get "has_users"
+      end
+
       scope module: 'containers' do
         resources :containers, only: [:index, :show, :create, :update, :destroy] do
           match "items/:id", to: "containers#add_item", via: [:put]
@@ -50,6 +55,7 @@ Rails.application.routes.draw do
         resources :roles, only: [:index, :show, :create, :update, :destroy]
         resources :permissions, only: [:index, :show]
       end
+      
     end
   end
 end
