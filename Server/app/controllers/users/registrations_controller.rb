@@ -6,15 +6,19 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
+  before_action :block_multiple_registrations, only: [:create]
+
   # GET /resource/sign_up
   # def new
   #   super
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    super
+    role = Role.first
+    role.users << current_user
+  end
 
   # GET /resource/edit
   # def edit
@@ -74,6 +78,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
       render json: {
         status: {message: "User couldn't be created successfully. #{current_user.errors.full_messages.to_sentence}"}
       }, status: :unprocessable_entity
+    end
+  end
+
+  def block_multiple_registrations
+    if User.count > 0
+      head :unauthorized
     end
   end
 end
