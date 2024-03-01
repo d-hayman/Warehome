@@ -27,7 +27,12 @@ function LoginPage(){
 
     const navigate = useNavigate();
 
+    //redirect effect for setup
     useEffect(() => {
+        /**
+         * Handles navigation to the signup page once it's
+         * determined that the first user needs to be created
+         */
         const checkUsers = async () => {
             try{
                 let _hasUsers = await hasUsers();
@@ -43,12 +48,11 @@ function LoginPage(){
         checkUsers();
     }, [])
 
-    //redirect effect for login or if signup is needed
+    //redirect effect for login
     useEffect(() => {
         /**
-         * Handles navigation to the signup page or the dashboard once it's determined if
-         * A) There are no users on the system yet
-         * B) The current user is already logged in
+         * Handles navigation to the dashboard once it's 
+         * determined if a user is already logged in
          */
         const handleRedirect = () => {
             if(loggedInAs.length > 0){

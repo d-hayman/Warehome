@@ -1,7 +1,7 @@
 /**
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
-import { LOGIN_API_URL, SIGNUP_API_URL } from "../../constants";
+import { LOGIN_API_URL, SIGNUP_API_URL, LOGOUT_API_URL } from "../../constants";
 import { hasJson } from "../utils/responseHelpers";
 
 /**
@@ -54,4 +54,25 @@ async function signup(username: string, password: string, confirmPassword: strin
     return response;
 }
 
-export { login, signup };
+/**
+ * Calls the logout API
+ */
+async function logout() {
+    const token = localStorage.getItem("token")??'';
+    const response = await fetch(`${LOGOUT_API_URL}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": token
+        }
+    });
+
+    localStorage.clear();
+
+    if (!response.ok) {
+        return false;
+    }
+
+    return true;
+}
+
+export { login, signup, logout };

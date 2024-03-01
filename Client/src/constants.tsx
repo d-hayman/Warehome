@@ -13,6 +13,11 @@ export const SIGNUP_API_URL =
         ? "http://mocked-api-url" 
         : import.meta.env.VITE_SIGNUP_API_URL;
 
+export const LOGOUT_API_URL = 
+    process.env.NODE_ENV === "test" 
+        ? "http://mocked-api-url" 
+        : import.meta.env.VITE_LOGOUT_API_URL;
+
 export const USERS_API_URL = 
     process.env.NODE_ENV === "test" 
         ? "http://mocked-api-url" 

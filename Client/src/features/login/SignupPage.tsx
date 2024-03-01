@@ -27,7 +27,12 @@ function SignupPage(){
 
     const navigate = useNavigate();
 
+    //redirect effect
     useEffect(() => {
+        /**
+         * Handles navigation back to the login page once it's
+         * determined that a user already exists
+         */
         const checkUsers = async () => {
             try{
                 let _hasUsers = await hasUsers();
@@ -44,9 +49,9 @@ function SignupPage(){
     }, [])
 
     /**
-     * 
-     * @param e 
-     * @returns 
+     * Handles the signup action
+     * @param e form submission event
+     * @returns void
      */
     const doSignup = async (e:any) => {
         e.preventDefault();
