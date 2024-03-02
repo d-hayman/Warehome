@@ -1,0 +1,20 @@
+@media(min-width: 992px) {
+    .leftnav_top {
+        height: calc(100vh - 56px);
+        overflow: auto;
+        scrollbar-width: none;
+    }
+
+    .leftnav_body {
+        background-color: #f8f9fa !important;
+    }
+}
+
+.leftnav_navbar {
+    flex: 0 0 100%;
+}
+
+.leftnav_body {
+    width: 400px;
+    overflow-y: scroll;
+}

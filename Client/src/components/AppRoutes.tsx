@@ -12,11 +12,13 @@ import DashboardPage from '../features/Dashboard/DashboardPage';
  */
 function AppRoutes() {
     return (
+        <div style={{flex:1}}>
         <Routes>
             <Route path="/" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
             <Route path="/dashboard" element={<DashboardPage/>}/>
         </Routes>
+        </div>
     )
 }
 
