@@ -13,4 +13,12 @@ class Container < ApplicationRecord
 
   validates :name, presence: true
   validates :description, presence: true
+
+  scope :top_level, ->() do
+    where('parent_id IS NULL')
+  end
+
+  scope :children_of, ->(parent) do
+    where('parent_id = ?', parent)
+  end
 end
