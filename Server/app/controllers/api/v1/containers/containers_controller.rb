@@ -61,7 +61,7 @@ module Api
         private
   
         def set_container
-          if params[:action].in? ("add_item","remove_item")
+          if ["add_item","remove_item"].include? params[:action]
             @container = Container.find(params[:container_id])
           else
             @container = Container.find(params[:id])

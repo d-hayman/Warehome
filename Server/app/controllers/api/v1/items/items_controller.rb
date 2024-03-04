@@ -55,7 +55,7 @@ module Api
         private
   
         def set_item
-          if params[:action].in? ("add_subcategory","remove_subcategory")
+          if ["add_subcategory","remove_subcategory"].include? params[:action]
             @item = Item.find(params[:item_id])
           else
             @item = Item.find(params[:id])
