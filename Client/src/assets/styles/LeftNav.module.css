@@ -24,3 +24,18 @@
 .leftnav_body {
     overflow-y: scroll;
 }
+
+.leftnav_acc_item {
+    padding-left: .75rem;
+}
+
+.leftnav_acc_header {
+    display: flex;
+    align-items: center;
+    height: 2.9rem;
+}
+
+.leftnav_acc_header > a {
+    text-decoration: none;
+    color: black;
+}

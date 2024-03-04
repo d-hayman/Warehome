@@ -1,17 +1,15 @@
 /**
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
-import { AccordionContext, useAccordionButton } from "react-bootstrap";
+import { useAccordionButton } from "react-bootstrap";
 import PropTypes, {InferProps} from "prop-types";
-import { useContext } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { isAccordionKeyActive } from "../utils/contextHelpers";
 
 /**
- * @param title: name of the thing to be deleted
- * @param parent: id of the parent model record where applicable (e.g. DELETE /api/articles/:parentId/comments/:id)
- * @param id: id of the thing to be deleted
- * @param deletion: API service function which makes the delete request
- * @param callback: function to be called after deletion
+ * @param children: child elements
+ * @param eventKey: string tied to the accordion item this controls
+ * @param callback: function to be called after click
  */
 const conextAwareTogglePropTypes = {
     children: PropTypes.any, 
@@ -22,26 +20,22 @@ const conextAwareTogglePropTypes = {
 type conextAwareToggleTypes = InferProps<typeof conextAwareTogglePropTypes>;
 
 function ContextAwareToggle({ children, eventKey, callback }: conextAwareToggleTypes) {
-    const { activeEventKey } = useContext(AccordionContext);
   
     const decoratedOnClick = useAccordionButton(
       eventKey,
       () => callback && callback(eventKey),
     );
   
-    const isCurrentEventKey = (
-        Array.isArray(activeEventKey) 
-            ? activeEventKey.includes(eventKey) 
-            : activeEventKey === eventKey);
+    const isCurrentEventKey = isAccordionKeyActive(eventKey);
   
     return (
       <button
         type="button"
-        style={{marginLeft:'auto'}}
+        style={{marginLeft:'auto', backgroundColor:'transparent'}}
         onClick={decoratedOnClick}
       >
         {children}
-        {isCurrentEventKey ? <FaChevronUp/> : <FaChevronDown/>}
+        {isCurrentEventKey ? <FaChevronDown/> : <FaChevronRight/>}
       </button>
     );
   }

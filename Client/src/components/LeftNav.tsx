@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { Accordion, Button, Card, Col, Container, Navbar, Offcanvas } from "react-bootstrap";
 import { MdMenu } from "react-icons/md";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from '../assets/styles/LeftNav.module.css';
 import { ContainerModel } from "../shared/models/container.model";
 import ContextAwareToggle from "../shared/components/ContextAwareToggle";
@@ -33,9 +33,9 @@ function ContainerNav({data}:{data:ContainerModel}) {
   return (<>Nothing</>)
   
   return (
-    <div className="">
-      <div className="" style={{display:'flex'}}>
-        {data.name}
+    <div className={styles.leftnav_acc_item}>
+      <div className={styles.leftnav_acc_header}>
+        <Link to={`/container/${data.id}`}>{data.name}</Link>
         <ContextAwareToggle eventKey={data.id}></ContextAwareToggle>
       </div>
       <Accordion.Collapse eventKey={data.id}>
