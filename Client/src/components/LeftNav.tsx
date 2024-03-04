@@ -3,12 +3,14 @@
  */
 
 import { useEffect, useState } from "react";
-import { Accordion, Button, Card, Col, Container, Navbar, Offcanvas } from "react-bootstrap";
+import { Accordion, Button, Container, Navbar, Offcanvas } from "react-bootstrap";
 import { MdMenu } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import styles from '../assets/styles/LeftNav.module.css';
 import { ContainerModel } from "../shared/models/container.model";
 import ContextAwareToggle from "../shared/components/ContextAwareToggle";
+import { fetchAllContainers } from "../shared/services/containers.service";
+import { isAccordionKeyActive } from "../shared/utils/contextHelpers";
 
 const excludeRoutes = ["/", "/signup"];
 
@@ -16,32 +18,45 @@ const excludeRoutes = ["/", "/signup"];
  * NavBar component for nested container accordions
  * @returns JSX.Element for the nav bar container
  */
-function ContainerNav({data}:{data:ContainerModel}) {
+function ContainerNav({containerData}:{containerData:ContainerModel}) {
   const [children, setChildren] = useState<ContainerModel[]>([]);
+
+  const active = isAccordionKeyActive(containerData.id);
   
-  useEffect(() => {
-    let iId = parseInt( data.id);
-    let conts = [ContainerModel.buildContainerData({id:''+(iId*3+1),name:'Closet'}),
-                  ContainerModel.buildContainerData({id:''+(iId*3+2),name:'Cookie Jar'}),
-                  ContainerModel.buildContainerData({id:''+(iId*3+3),name:'Test'})]
+  /**
+   * function to fetch child containers
+   * @param e eventKey
+   * @returns void
+   */
+  const fetchChildren = async (e:string) => {
+    // if the accordion item for this container was already active and is now closing then we don't have to refresh data
+    if(active) return; 
 
-    setChildren(conts);
+    try{
+      let data = await fetchAllContainers(containerData.id);
+      if(data.containers){
+        const containers = []
+        for(const c of data.containers){
+          containers.push(ContainerModel.buildContainerData(c));
+        }
 
-  }, [])
-
-  if(parseInt( data.id) > 24)
-  return (<>Nothing</>)
+        setChildren(containers);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
   
   return (
     <div className={styles.leftnav_acc_item}>
       <div className={styles.leftnav_acc_header}>
-        <Link to={`/container/${data.id}`}>{data.name}</Link>
-        <ContextAwareToggle eventKey={data.id}></ContextAwareToggle>
+        <Link to={`/container/${containerData.id}`}>{containerData.name}</Link>
+        {containerData.children > 0 && <ContextAwareToggle eventKey={containerData.id} callback={fetchChildren}></ContextAwareToggle>}
       </div>
-      <Accordion.Collapse eventKey={data.id}>
+      <Accordion.Collapse eventKey={containerData.id}>
 
           <Accordion alwaysOpen>
-              {children.map((container:ContainerModel) => (<ContainerNav key={container.id} data={container}/>))}
+              {children.map((container:ContainerModel) => (<ContainerNav key={container.id} containerData={container}/>))}
             </Accordion>
       </Accordion.Collapse>
     </div>
@@ -56,19 +71,35 @@ function LeftNav() {
     const [show, setShow] = useState(false);
     const [containers, setContainers] = useState<ContainerModel[]>([]);
 
+    let location = useLocation();
+
     useEffect(() => {
-      let conts = [ContainerModel.buildContainerData({id:'1',name:'Closet'}),
-                    ContainerModel.buildContainerData({id:'2',name:'Cookie Jar'}),
-                    ContainerModel.buildContainerData({id:'3',name:'Test'})]
+      /**
+       * Function to fetch the top level containers
+       */
+      const fetchContainers = async () => {
+        try{
+          let data = await fetchAllContainers();
+          if(data.containers){
+            const containers = []
+            for(const c of data.containers){
+              containers.push(ContainerModel.buildContainerData(c));
+            }
 
-      setContainers(conts);
+            setContainers(containers);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
-    }, [])
+      if(excludeRoutes.indexOf(location.pathname) == -1){
+        fetchContainers();
+      }
+    }, [location.pathname])
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  let location = useLocation();
 
   if(excludeRoutes.indexOf(location.pathname) != -1){
     return (<>
@@ -92,7 +123,7 @@ function LeftNav() {
         <Offcanvas.Body className={styles.leftnav_body}>
           <div>
             <Accordion alwaysOpen>
-              {containers.map((container:ContainerModel) => (<ContainerNav key={container.id} data={container}/>))}
+              {containers.map((container:ContainerModel) => (<ContainerNav key={container.id} containerData={container}/>))}
             </Accordion>
           </div>
         </Offcanvas.Body>

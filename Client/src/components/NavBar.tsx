@@ -58,7 +58,7 @@ function NavBar() {
     return (
         <Navbar bg="primary" data-bs-theme="dark">
             <Container>
-                <Navbar.Brand href="/">Warehome</Navbar.Brand>
+                <Navbar.Brand href="/dashboard">Warehome</Navbar.Brand>
                 <Tooltip title="Sauce">
                     <Link 
                         to="https://github.com/d-hayman/Warehome"

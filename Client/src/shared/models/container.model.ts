@@ -21,6 +21,10 @@ class ContainerModel {
      * container notes
      */
     notes:string = '';
+    /**
+     * Number of containers directly within this container
+     */
+    children:number = 0;
 
     /**
      * Parse response data to create a container model object
@@ -33,6 +37,7 @@ class ContainerModel {
         container.name = dataset.name ?? '';
         container.description = dataset.description ?? '';
         container.notes = dataset.notes ?? '';
+        container.children = dataset.children ?? 0;
         return container;
     }
 

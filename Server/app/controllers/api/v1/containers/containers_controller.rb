@@ -6,12 +6,12 @@ module Api
         before_action :set_item, only: %i[add_item remove_item]
   
         def index
-          @containers = params.has_key?(:parent) ? Caontainer.children_of(params[:parent]) : Container.top_level
+          @containers = params.has_key?(:parent) ? Container.children_of(params[:parent]) : Container.top_level
           
           total_containers_count = @containers.count
           
           render json: {
-              containers: @containers,
+              containers: @containers.map{ |container| container.as_json.merge(children: container.children.count)},
               total_count: total_containers_count
           }
         end
