@@ -39,3 +39,11 @@
     text-decoration: none;
     color: black;
 }
+
+.leftnav_category {
+    padding-top: 4px;
+}
+
+.leftNav_subcategories {
+    padding-left: .75rem;
+}

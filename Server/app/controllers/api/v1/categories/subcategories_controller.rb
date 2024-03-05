@@ -6,7 +6,7 @@ module Api
         before_action :set_subcategory, only: %i[show update destroy]
   
         def index
-          @subcategories = @category.subcategories
+          @subcategories = @category.subcategories.order(name: :asc)
           
           total_subcategories_count = @category.subcategories.count
           

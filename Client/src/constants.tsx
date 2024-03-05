@@ -32,3 +32,13 @@ export const CONTAINERS_API_URL =
     process.env.NODE_ENV === "test" 
         ? "http://mocked-api-url" 
         : import.meta.env.VITE_CONTAINERS_API_URL;
+
+export const CATEGORIES_API_URL =
+    process.env.NODE_ENV === "test"
+        ? "http://mocked-api-url"
+        : import.meta.env.VITE_CATEGORIES_API_URL
+
+export const SUBCATEGORIES_API_URL =
+    process.env.NODE_ENV === "test"
+        ? "http://mocked-api-url"
+        : import.meta.env.VITE_SUBCATEGORIES_API_URL

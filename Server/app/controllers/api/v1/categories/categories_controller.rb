@@ -5,7 +5,7 @@ module Api
       before_action :set_category, only: %i[show update destroy]
 
       def index
-        @categories = Category.all
+        @categories = Category.all.order(name: :asc)
         
         total_categories_count = Category.count
         
