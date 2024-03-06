@@ -3,6 +3,7 @@
  */
 import PropTypes, {InferProps} from "prop-types";
 import { Pagination } from "react-bootstrap";
+import styles from "./Pagination.module.css"
 
 /**
  * @param currentPage the current page, of course
@@ -110,27 +111,47 @@ function Paginator({ currentPage, totalItems, itemsPerPage, onPageChange }: pagi
         return createRange(middlePagesStart, middlePagesEnd);
     }
 
-    return (
-        <Pagination style={{float:"right"}}>
-            <Pagination.First onClick={handleFirst} disabled={currentPage === 1}/>
-            <Pagination.Prev onClick={handlePrevious} disabled={currentPage === 1} />
-            {getVisiblePageNumbers().map((page: any, index: number) => 
-                typeof page === "number" ? (
-                    <Pagination.Item
-                        key={page}
-                        onClick={() => onPageChange(page)}
-                        active={currentPage === page}
-                    >
-                        {page}
-                    </Pagination.Item>
-                ) : (
-                    <Pagination.Ellipsis/>
-                )
-            )}
+    /**
+     * Makes the page number button
+     * @param page page number of ellipsis to render
+     * @param index index in the array of page numbers and ellipses
+     * @returns JSX.Element
+     */
+    const makeButton = (page: any, index: number) => {
+        return (
+            typeof page === "number" ? (
+                <Pagination.Item className={styles.middle_item}
+                    key={page}
+                    onClick={() => onPageChange(page)}
+                    active={currentPage === page}
+                >
+                    {page}
+                </Pagination.Item>
+            ) : (
+                <Pagination.Ellipsis key={"ellipsis"+index}/>
+            )
+        )
+    }
 
-            <Pagination.Next onClick={handleNext} disabled={currentPage === totalPages || totalItems === 0} />
-            <Pagination.Last onClick={handleLast} disabled={currentPage === totalPages || totalItems === 0} />
-        </Pagination>
+    return (
+        <span className={styles.pagination_outer}>
+            <Pagination className={styles.pagination_segment}>
+                <Pagination.First onClick={handleFirst} disabled={currentPage === 1}/>
+                <Pagination.Prev onClick={handlePrevious} disabled={currentPage === 1} />
+                {getVisiblePageNumbers().slice(0, 6).map((page: any, index: number) => 
+                    makeButton(page, index)
+                )}
+            </Pagination>
+            
+            <Pagination className={styles.pagination_segment}>
+            {getVisiblePageNumbers().slice(6).map((page: any, index: number) => 
+                    makeButton(page, index)
+                )}
+
+                <Pagination.Next onClick={handleNext} disabled={currentPage === totalPages || totalItems === 0} />
+                <Pagination.Last onClick={handleLast} disabled={currentPage === totalPages || totalItems === 0} />
+            </Pagination>
+        </span>
     );
 }
 

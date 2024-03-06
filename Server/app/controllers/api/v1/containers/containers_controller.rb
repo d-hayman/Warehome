@@ -11,13 +11,13 @@ module Api
           total_containers_count = @containers.count
           
           render json: {
-              containers: @containers.map{ |container| container.as_json.merge(children: container.children.count)},
+              containers: @containers.map{ |container| augment_with_image(container).as_json.merge(children: container.children.count)},
               total_count: total_containers_count
           }
         end
   
         def show
-          render json: @container
+          render json: augment_with_image(@container)
         end
   
         def create

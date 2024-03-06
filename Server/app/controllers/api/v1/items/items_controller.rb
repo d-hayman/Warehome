@@ -6,18 +6,20 @@ module Api
         before_action :set_subcategory, only: %i[add_subcategory remove_subcategory]
   
         def index
-          @items = Item.all
+          items_per_page = 24
+          @items = Item.all.order(id: :desc).page(param[:page]).per(items_per_page)
           
           total_items_count = Item.count
           
           render json: {
-              items: @items,
-              total_count: total_items_count
+              items: @items.map{ |item| augment_with_image(item)},
+              total_count: total_items_count,
+              per_page: items_per_page
           }
         end
   
         def show
-          render json: @item
+          render json: augment_with_image(@item)
         end
   
         def create

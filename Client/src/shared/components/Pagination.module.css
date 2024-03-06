@@ -1,0 +1,11 @@
+.middle_item > a {
+    border-radius: unset !important;
+}
+
+.pagination_outer {
+    float: right;
+}
+
+.pagination_segment {
+    display: inline-flex !important;
+}

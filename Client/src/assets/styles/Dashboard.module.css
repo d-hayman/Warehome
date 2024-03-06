@@ -1,0 +1,12 @@
+.dashboard_outer {
+    margin-top: 2rem;
+    max-width: unset !important;
+    width: 100%;
+    margin-left: unset !important;
+    margin-right: unset !important;
+}
+
+.dashboard_display_toggle {
+    padding-right: 2rem !important;
+    text-align: right;
+}
