@@ -1,4 +1,4 @@
-.middle_item > a {
+.middle_item > * {
     border-radius: unset !important;
 }
 

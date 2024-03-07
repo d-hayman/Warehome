@@ -137,7 +137,7 @@ function Paginator({ currentPage, totalItems, itemsPerPage, onPageChange }: pagi
         <span className={styles.pagination_outer}>
             <Pagination className={styles.pagination_segment}>
                 <Pagination.First onClick={handleFirst} disabled={currentPage === 1}/>
-                <Pagination.Prev onClick={handlePrevious} disabled={currentPage === 1} />
+                <Pagination.Prev onClick={handlePrevious} disabled={currentPage === 1} className={styles.middle_item} />
                 {getVisiblePageNumbers().slice(0, 6).map((page: any, index: number) => 
                     makeButton(page, index)
                 )}
@@ -148,7 +148,7 @@ function Paginator({ currentPage, totalItems, itemsPerPage, onPageChange }: pagi
                     makeButton(page, index)
                 )}
 
-                <Pagination.Next onClick={handleNext} disabled={currentPage === totalPages || totalItems === 0} />
+                <Pagination.Next onClick={handleNext} disabled={currentPage === totalPages || totalItems === 0} className={styles.middle_item} />
                 <Pagination.Last onClick={handleLast} disabled={currentPage === totalPages || totalItems === 0} />
             </Pagination>
         </span>

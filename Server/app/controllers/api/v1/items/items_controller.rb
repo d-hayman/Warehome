@@ -7,7 +7,7 @@ module Api
   
         def index
           items_per_page = 24
-          @items = Item.all.order(id: :desc).page(param[:page]).per(items_per_page)
+          @items = Item.all.order(id: :desc).page(params[:page]).per(items_per_page)
           
           total_items_count = Item.count
           
