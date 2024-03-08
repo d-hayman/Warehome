@@ -6,10 +6,11 @@ import { Alert, Button, Container, Form, InputGroup, Nav, Navbar } from 'react-b
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GiSaucepan } from 'react-icons/gi';
 import { MdLogout, MdSettings } from 'react-icons/md';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import styles from '../assets/styles/NavBar.module.css'
 import { logout } from '../shared/services/auth.service';
+import { SearchContext } from './providers/SearchProvider';
 
 const excludeRoutes = ["/", "/signup"];
 
@@ -20,7 +21,7 @@ const excludeRoutes = ["/", "/signup"];
 function NavBar() {
     const hasAdminPanel = (localStorage.getItem("permissions")??'').includes("AdminPanel:view") || true;
 
-    const [search, setSearch] = useState('');
+    const {searchQuery, setSearch, submit} = useContext(SearchContext);
 
     const [logoutError, setLogoutError] = useState(false);
 
@@ -74,10 +75,10 @@ function NavBar() {
                             className={styles.search_bar}
                             type="search" 
                             placeholder="Search"
-                            value={search} 
+                            value={searchQuery} 
                             onChange={(e) => setSearch(e.target.value)} 
                         />
-                        <Button variant='light' onClick={() => {}}>
+                        <Button variant='light' onClick={submit}>
                             <FaMagnifyingGlass/>
                         </Button>
                     </InputGroup>

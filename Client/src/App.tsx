@@ -4,10 +4,12 @@ import './App.css'
 import AppRoutes from './components/AppRoutes';
 import NavBar from './components/NavBar';
 import LeftNav from './components/LeftNav';
+import { SearchProvider } from './components/providers/SearchProvider';
 
 function App() {
 
   return (
+    <SearchProvider>
     <Router>
       <div className='app'>
         <NavBar/>
@@ -17,6 +19,7 @@ function App() {
         </div>
       </div>
     </Router>
+    </SearchProvider>
   )
 }
 
