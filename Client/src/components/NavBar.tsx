@@ -21,7 +21,7 @@ const excludeRoutes = ["/", "/signup"];
 function NavBar() {
     const hasAdminPanel = (localStorage.getItem("permissions")??'').includes("AdminPanel:view") || true;
 
-    const {searchQuery, setSearch, submit} = useContext(SearchContext);
+    const {searchQuery, emitSearch, submit} = useContext(SearchContext);
 
     const [logoutError, setLogoutError] = useState(false);
 
@@ -76,7 +76,13 @@ function NavBar() {
                             type="search" 
                             placeholder="Search"
                             value={searchQuery} 
-                            onChange={(e) => setSearch(e.target.value)} 
+                            onChange={(e) => emitSearch(e.target.value)} 
+                            onKeyDown={(e) => {
+                                if (e.code === "Enter") {
+                                e.preventDefault();
+                                submit();
+                                }
+                            }}
                         />
                         <Button variant='light' onClick={submit}>
                             <FaMagnifyingGlass/>

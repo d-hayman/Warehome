@@ -5,9 +5,11 @@ import { useState, createContext } from "react";
 
 interface SearchContextValue {
     searchQuery: string;
-    setSearch: (query: string) => void;
+    emitSearch: (query: string) => void;
     selectedCategories: string[];
-    setCategories: (categories: string[]) => void;
+    emitCategories: (categories: string[]) => void;
+    selectedSubcategories: string[];
+    emitSubcategories: (categories: string[]) => void;
     searchSubmit: boolean;
     submit: () => void;
 }
@@ -22,6 +24,7 @@ const SearchContext = createContext({} as SearchContextValue);
 const SearchProvider = ({ children }:{children:any}) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
 
     const [searchSubmit, setSearchSubmit] = useState(false);
   
@@ -29,7 +32,7 @@ const SearchProvider = ({ children }:{children:any}) => {
      * Updates the search query and handles other applicable logic
      * @param query 
      */
-    const setSearch = (query:string) => {
+    const emitSearch = (query:string) => {
       setSearchQuery(query);
     };
   
@@ -37,8 +40,16 @@ const SearchProvider = ({ children }:{children:any}) => {
      * Updates the category selection
      * @param categories 
      */
-    const setCategories = (categories:string[]) => {
+    const emitCategories = (categories:string[]) => {
       setSelectedCategories(categories);
+    };
+  
+    /**
+     * Updates the subcategory selection
+     * @param subcategories 
+     */
+    const emitSubcategories = (subcategories:string[]) => {
+      setSelectedSubcategories(subcategories);
     };
 
     /**
@@ -49,8 +60,12 @@ const SearchProvider = ({ children }:{children:any}) => {
     }
   
     return (
-      <SearchContext.Provider value={{ searchQuery, setSearch, selectedCategories, setCategories, searchSubmit, submit }}>
-        {children}
+      <SearchContext.Provider value={{ 
+        searchQuery, emitSearch, 
+        selectedCategories, emitCategories, 
+        selectedSubcategories, emitSubcategories, 
+        searchSubmit, submit }}>
+          {children}
       </SearchContext.Provider>
     );
   };

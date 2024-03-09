@@ -10,4 +10,9 @@ class Item < ApplicationRecord
     belongs_to :creator, class_name: "User", optional: true
 
     validates :description, presence: true
+
+    scope :search_term, ->(query) do
+		where('description LIKE ?', 
+			"%#{sanitize_sql_like(query)}%")
+	end
 end

@@ -7,9 +7,12 @@ module Api
   
         def index
           items_per_page = 24
-          @items = Item.all.order(id: :desc).page(params[:page]).per(items_per_page)
+          @items = params.has_key?(:q) ? Item.search_term(params[:q]) : Item.all
+
+          total_items_count = @items.count
+
+          @items = @items.order(id: :desc).page(params[:page]).per(items_per_page)
           
-          total_items_count = Item.count
           
           render json: {
               items: @items.map{ |item| augment_with_image(item)},

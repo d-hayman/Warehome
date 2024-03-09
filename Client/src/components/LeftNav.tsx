@@ -2,7 +2,7 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Accordion, Button, Container, Navbar, Offcanvas } from "react-bootstrap";
 import { MdMenu } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
@@ -15,6 +15,7 @@ import { fetchAllCategories, fetchAllSubcategories } from "../shared/services/ca
 import { isAccordionKeyActive } from "../shared/utils/contextHelpers";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { SubcategoryModel } from "../shared/models/categories/subcategory.model";
+import { SearchContext } from "./providers/SearchProvider";
 
 const excludeRoutes = ["/", "/signup"];
 
@@ -76,10 +77,17 @@ function ContainerNav({containerData}:{containerData:ContainerModel}) {
 function CategoryNav({categoryData}:{categoryData:CategoryModel}) {
   const [subcategories, setSubcategories] = useState<SubcategoryModel[]>([]);
 
+  const {selectedCategories, emitCategories, selectedSubcategories, emitSubcategories} = useContext(SearchContext);
+
   const active = isAccordionKeyActive(categoryData.id);
 
+  /**
+   * 
+   * @param e 
+   * @returns 
+   */
   const fetchSubcategories = async (e:string) => {
-    // if the accordion item for this container was already active and is now closing then we don't have to refresh data
+    // if the accordion item for this category was already active and is now closing then we don't have to refresh data
     if(active) return; 
 
     try {
@@ -98,15 +106,68 @@ function CategoryNav({categoryData}:{categoryData:CategoryModel}) {
 
   };
 
+  /**
+   * adds or removes a selected category
+   * @param id category id to add or remove
+   * @returns void
+   */
+  const categoryCheck = (id: string) => {
+    if(selectedCategories.includes(id)){
+      emitCategories(selectedCategories.filter((s) => s != id));
+      return;
+    }
+    emitCategories([...selectedCategories, id]);
+  }
+
+  /**
+   * adds or removes a selected subcategory
+   * @param id subcategory id to add or remove
+   * @returns void
+   */
+  const subcategoryCheck = (id: string) => {
+    if(selectedSubcategories.includes(id)){
+      emitSubcategories(selectedSubcategories.filter((s) => s != id));
+      return;
+    } 
+    emitSubcategories([...selectedSubcategories, id]);
+  }
+
   return (
     <div className={styles.leftnav_acc_item}>
       <div className={styles.leftnav_acc_header}>
-        <FormControlLabel className={styles.leftnav_category} label={categoryData.name} control={<Checkbox/>}/>
+        <FormControlLabel 
+          className={styles.leftnav_category} 
+          label={categoryData.name} 
+          control={
+            <Checkbox 
+              id={""+categoryData.id}
+              value={""+categoryData.id}
+              checked={selectedCategories.includes(""+categoryData.id)}
+              onClick={(e) => {e.preventDefault(); categoryCheck(""+categoryData.id)}}
+            />
+          }
+        />
         <ContextAwareToggle eventKey={categoryData.id} callback={fetchSubcategories}/>
       </div>
       <Accordion.Collapse eventKey={categoryData.id}>
         <div className={styles.leftNav_subcategories}>
-          {subcategories.map((subcategory:SubcategoryModel) => (<div><FormControlLabel label={subcategory.name} control={<Checkbox/>}/></div>))}
+          {subcategories.map((subcategory:SubcategoryModel) => 
+            (
+              <div key={subcategory.id}>
+                <FormControlLabel 
+                  label={subcategory.name} 
+                  control={
+                    <Checkbox
+                      id={""+subcategory.id}
+                      value={""+subcategory.id}
+                      checked={selectedSubcategories.includes(""+subcategory.id)}
+                      onClick={(e) => {e.preventDefault(); subcategoryCheck(""+subcategory.id)}}
+                    />
+                  }
+                />
+              </div>
+            )
+          )}
         </div>
       </Accordion.Collapse>
     </div>

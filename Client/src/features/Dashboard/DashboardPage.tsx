@@ -6,11 +6,12 @@ import { ButtonGroup, Card, Col, Container, Row, ToggleButton } from "react-boot
 import Paginator from "../../shared/components/Pagination"
 import styles from "../../assets/styles/Dashboard.module.css"
 import noImage from '../../assets/img/imagenotfound.png';
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { MdGridView, MdList } from "react-icons/md";
 import { fetchAllItems } from "../../shared/services/items.service";
 import { ItemModel } from "../../shared/models/item.model";
 import { useSearchParams } from "react-router-dom";
+import { SearchContext } from "../../components/providers/SearchProvider";
 
 /**
  * Dashboard Page
@@ -27,13 +28,16 @@ function DashboardPage(){
     const [itemsPerPage, setItemsPerPage] = useState(24);
     const [totalItems, setTotalItems] = useState(0);
 
+    const {searchQuery, searchSubmit, selectedCategories, selectedSubcategories} = useContext(SearchContext);
+
+    // effect for item fetching - refetch when search is submitted, on page change, on category selection
     useEffect(() => {
         /**
          * Calls the items fetch API
          */
         const loadItems = async () => {
             try{
-                let data = await fetchAllItems(page);
+                let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories);
                 if(data.items){
                     const items = [];
                     for(const i of data.items){
@@ -49,7 +53,7 @@ function DashboardPage(){
             }
         }
         loadItems();
-    }, [page]);
+    }, [page, searchSubmit, selectedCategories, selectedSubcategories]);
 
     /**
      * Page change handler
@@ -99,11 +103,11 @@ function DashboardPage(){
             </Row>
             <Row>
                 {items.map((item:ItemModel) => (
-                    <Col xs={12} md={itemDisplay == "1" ? 4 : 12} className={styles.item_card}>
+                    <Col key={item.id} xs={12} md={itemDisplay == "1" ? 4 : 12} className={styles.item_card}>
                         <Container className={styles.item_card_inner}>
                             <Row>
                                 <Col xs={4} md={itemDisplay == "1" ? 12 : 4}>
-                                    <img src={item.image_url ? item.image_url : noImage} style={{maxWidth:'100%'}}/>
+                                    <img src={item.image_url ? item.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
                                 </Col>
                                 <Col xs={8} md={itemDisplay == "1" ? 12 : 8}>
                                     <b>{item.description}</b><br/>
