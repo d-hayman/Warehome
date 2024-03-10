@@ -10,8 +10,6 @@ interface SearchContextValue {
     emitCategories: (categories: string[]) => void;
     selectedSubcategories: string[];
     emitSubcategories: (categories: string[]) => void;
-    searchSubmit: boolean;
-    submit: () => void;
 }
 
 const SearchContext = createContext({} as SearchContextValue);
@@ -25,8 +23,6 @@ const SearchProvider = ({ children }:{children:any}) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
-
-    const [searchSubmit, setSearchSubmit] = useState(false);
   
     /**
      * Updates the search query and handles other applicable logic
@@ -51,20 +47,13 @@ const SearchProvider = ({ children }:{children:any}) => {
     const emitSubcategories = (subcategories:string[]) => {
       setSelectedSubcategories(subcategories);
     };
-
-    /**
-     * Flips the submit bool to trigger any useEffect that watches the submit flag
-     */
-    const submit = () => {
-        setSearchSubmit(!searchSubmit);
-    }
   
     return (
       <SearchContext.Provider value={{ 
         searchQuery, emitSearch, 
         selectedCategories, emitCategories, 
         selectedSubcategories, emitSubcategories, 
-        searchSubmit, submit }}>
+      }}>
           {children}
       </SearchContext.Provider>
     );

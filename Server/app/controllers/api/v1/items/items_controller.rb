@@ -7,10 +7,20 @@ module Api
   
         def index
           items_per_page = 24
+          # filter first by search term
           @items = params.has_key?(:q) ? Item.search_term(params[:q]) : Item.all
+
+          # if subcategories or categories are selected filter by those as well
+          if params.has_key?(:category_ids) || params.has_key?(:subcategory_ids)
+            @items = @items&.in_categories(
+              params.has_key?(:category_ids) ? params[:category_ids] : [],
+              params.has_key?(:subcategory_ids) ? params[:subcategory_ids] : []
+            )
+          end
 
           total_items_count = @items.count
 
+          # finally, paginate the results
           @items = @items.order(id: :desc).page(params[:page]).per(items_per_page)
           
           

@@ -28,32 +28,48 @@ function DashboardPage(){
     const [itemsPerPage, setItemsPerPage] = useState(24);
     const [totalItems, setTotalItems] = useState(0);
 
-    const {searchQuery, searchSubmit, selectedCategories, selectedSubcategories} = useContext(SearchContext);
+    const {searchQuery, selectedCategories, selectedSubcategories} = useContext(SearchContext);
 
-    // effect for item fetching - refetch when search is submitted, on page change, on category selection
-    useEffect(() => {
-        /**
-         * Calls the items fetch API
-         */
-        const loadItems = async () => {
-            try{
-                let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories);
-                if(data.items){
-                    const items = [];
-                    for(const i of data.items){
-                        items.push(ItemModel.buildItemData(i));
-                    }
-
-                    setItems(items);
-                    setTotalItems(data.total_count);
-                    setItemsPerPage(data.per_page);
+    /**
+     * Calls the items fetch API
+     */
+    const loadItems = async () => {
+        try{
+            let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories);
+            if(data.items){
+                const items = [];
+                for(const i of data.items){
+                    items.push(ItemModel.buildItemData(i));
                 }
-            } catch(e) {
-                console.error(e);
+
+                setItems(items);
+                setTotalItems(data.total_count);
+                setItemsPerPage(data.per_page);
+
+                if(page > 1 && items.length == 0){
+                    setPage(1);
+                }
             }
+        } catch(e) {
+            console.error(e);
         }
+        
+        setSearchParams({page: page, q: searchQuery} as unknown as URLSearchParams);
+    }
+
+    // effect for item fetching - refetch on page change
+    useEffect(() => {
         loadItems();
-    }, [page, searchSubmit, selectedCategories, selectedSubcategories]);
+    }, [page]);
+
+    // effect for item fetching - refetch when search is submitted, on category selection
+    useEffect(() => {
+        if(page > 1){
+            setPage(1); //loadItems called by page change effect
+        } else {
+            loadItems();
+        }
+    }, [searchQuery, selectedCategories, selectedSubcategories]);
 
     /**
      * Page change handler
@@ -61,8 +77,6 @@ function DashboardPage(){
      */
     const handlePageChange = (page:number) => {
         setPage(page);
-
-        setSearchParams({page: page} as unknown as URLSearchParams)
     }
     
     return (
