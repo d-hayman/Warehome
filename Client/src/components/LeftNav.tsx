@@ -17,7 +17,7 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import { SubcategoryModel } from "../shared/models/categories/subcategory.model";
 import { SearchContext } from "./providers/SearchProvider";
 
-const excludeRoutes = ["/", "/signup"];
+const excludeRoutes = ["", "signup", "admin"];
 
 /**
  * LeftNav component for nested container accordions
@@ -220,7 +220,7 @@ function LeftNav() {
         }
       };
 
-      if(excludeRoutes.indexOf(location.pathname) == -1){
+      if(excludeRoutes.indexOf(location.pathname.split('/')[1]) == -1){
         fetchContainers();
         fetchCategories();
       }
@@ -229,7 +229,7 @@ function LeftNav() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  if(excludeRoutes.indexOf(location.pathname) != -1){
+  if(excludeRoutes.indexOf(location.pathname.split('/')[1]) != -1){
     return (<>
     </>);
     }

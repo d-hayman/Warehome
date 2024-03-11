@@ -5,6 +5,8 @@ import {Route, Routes} from 'react-router-dom';
 import LoginPage from '../features/login/LoginPage';
 import SignupPage from '../features/login/SignupPage';
 import DashboardPage from '../features/dashboard/DashboardPage';
+import AdminRoot from '../features/admin/AdminRoot';
+import AdminUsers from '../features/admin/AdminUsers';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -17,6 +19,9 @@ function AppRoutes() {
             <Route path="/" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
             <Route path="/dashboard" element={<DashboardPage/>}/>
+            
+            <Route path="/admin" element={<AdminRoot/>}/>
+            <Route path="/admin/users" element={<AdminUsers/>}/>
         </Routes>
         </div>
     )

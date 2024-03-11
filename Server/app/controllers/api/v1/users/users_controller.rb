@@ -1,7 +1,7 @@
 module Api
     module V1
       class Users::UsersController < AuthenticatedController
-        before_action -> {check_basic_auth( :User, params[:action], ['show'], params[:id])}
+        before_action -> {check_permissions( :User, params[:action], ['show'], params[:id])}
         before_action :set_user, only: %i[show]
 
         def index
