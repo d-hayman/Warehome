@@ -2,7 +2,7 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { ButtonGroup, Card, Col, Container, Row, ToggleButton } from "react-bootstrap"
+import { ButtonGroup, Col, Container, Row, ToggleButton } from "react-bootstrap"
 import Paginator from "../../shared/components/Pagination"
 import styles from "../../assets/styles/Dashboard.module.css"
 import noImage from '../../assets/img/imagenotfound.png';

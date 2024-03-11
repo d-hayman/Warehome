@@ -4,7 +4,7 @@
 import {Route, Routes} from 'react-router-dom';
 import LoginPage from '../features/login/LoginPage';
 import SignupPage from '../features/login/SignupPage';
-import DashboardPage from '../features/Dashboard/DashboardPage';
+import DashboardPage from '../features/dashboard/DashboardPage';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
