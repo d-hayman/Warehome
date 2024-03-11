@@ -16,43 +16,42 @@ import {
 } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
-import { fetchAllUsers } from '../../shared/services/users.service';
-import { Button, Container } from 'react-bootstrap';
+import { fetchAllCategories } from '../../shared/services/categories.service';
 import { MdRefresh } from 'react-icons/md';
-import { FaKey } from 'react-icons/fa';
-import { UserModel } from '../../shared/models/user.model';
+import { CategoryModel } from '../../shared/models/categories/category.model';
+import styles from '../../assets/styles/Admin.module.css';
+import { Container } from 'react-bootstrap';
 
-function AdminUsers() {
+function AdminCategories() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [users, setUsers] = useState<UserModel[]>([]);
+    const [categories, setCategories] = useState<CategoryModel[]>([]);
     const [, setLoading] = useState(true);
     const [,setError] = useState<any>(null);
-    const [totalUsers, setTotalUsers] = useState(0);
+    const [totalCategories, setTotalCategories] = useState(0);
 
-    async function loadUsers() {
+    async function loadCategories() {
         try {
             //MUI paginator is 0-indexed but Kaminari is 1-indexed
-            let data = await fetchAllUsers(page+1, rowsPerPage);
-            if(data.users) {
-                setUsers(data.users);
-                setTotalUsers(data.total_count);
-                setRowsPerPage(Number.parseInt(data.per_page));
+            let data = await fetchAllCategories();
+            if(data.categories) {
+                setCategories(data.categories);
+                setTotalCategories(data.total_count);
             }
             setLoading(false);
         } catch(e) {
             setError(e);
             setLoading(false);
-            console.error("Failed to fetch users: ", e);
+            console.error("Failed to fetch categories: ", e);
         }
     }
 
     useEffect(() => {
-        loadUsers();
-    }, [rowsPerPage, page])
+        loadCategories();
+    }, [])
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = Math.max(0, rowsPerPage - users.length);
+  const emptyRows = Math.max(0, (1 + page) * rowsPerPage - totalCategories);
 
   const handleChangePage = (
     _: React.MouseEvent<HTMLButtonElement> | null,
@@ -74,10 +73,11 @@ function AdminUsers() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Username</TableCell>
+            <TableCell>Category</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell align="right">
                 <Tooltip title="Refresh">
-                    <IconButton onClick={() => {loadUsers()}}>
+                    <IconButton onClick={() => {loadCategories()}}>
                         <MdRefresh/>
                     </IconButton>
                 </Tooltip>
@@ -85,10 +85,13 @@ function AdminUsers() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {users.map((row) => (
-            <TableRow key={row.username}>
+          {categories.slice(page * rowsPerPage, (page+1) * rowsPerPage).map((row) => (
+            <TableRow key={row.id}>
               <TableCell component="th" scope="row">
-                {row.username}
+                {row.name}
+              </TableCell>
+              <TableCell>
+                {row.description}
               </TableCell>
               <TableCell align="right">
               </TableCell>
@@ -105,7 +108,7 @@ function AdminUsers() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
               colSpan={4}
-              count={totalUsers}
+              count={totalCategories}
               rowsPerPage={rowsPerPage}
               page={page}
               
@@ -120,4 +123,4 @@ function AdminUsers() {
   );
 }
 
-export default AdminUsers;
+export default AdminCategories;
