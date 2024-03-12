@@ -14,12 +14,13 @@ import { isAccordionKeyActive } from "../utils/contextHelpers";
 const conextAwareTogglePropTypes = {
     children: PropTypes.any, 
     eventKey: PropTypes.string.isRequired, 
-    callback:PropTypes.func
+    callback: PropTypes.func,
+    buttonColor: PropTypes.string
 };
 
 type conextAwareToggleTypes = InferProps<typeof conextAwareTogglePropTypes>;
 
-function ContextAwareToggle({ children, eventKey, callback }: conextAwareToggleTypes) {
+function ContextAwareToggle({ children, eventKey, callback, buttonColor="#000000" }: conextAwareToggleTypes) {
   
     const decoratedOnClick = useAccordionButton(
       eventKey,
@@ -31,7 +32,7 @@ function ContextAwareToggle({ children, eventKey, callback }: conextAwareToggleT
     return (
       <button
         type="button"
-        style={{marginLeft:'auto', backgroundColor:'transparent'}}
+        style={{marginLeft:'auto', backgroundColor:'transparent', color:`${buttonColor}`}}
         onClick={decoratedOnClick}
       >
         {children}
