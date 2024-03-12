@@ -8,6 +8,7 @@ import DashboardPage from '../features/dashboard/DashboardPage';
 import AdminRoot from '../features/admin/AdminRoot';
 import AdminUsers from '../features/admin/AdminUsers';
 import AdminCategories from '../features/admin/AdminCategories';
+import AdminCategoriesEdit from '../features/admin/AdminCategoriesEdit';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -24,6 +25,7 @@ function AppRoutes() {
             <Route path="/admin" element={<AdminRoot/>}/>
             <Route path="/admin/users" element={<AdminUsers/>}/>
             <Route path="/admin/categories" element={<AdminCategories/>}/>
+            <Route path="/admin/categories/:id" element={<AdminCategoriesEdit/>}/>
         </Routes>
         </div>
     )

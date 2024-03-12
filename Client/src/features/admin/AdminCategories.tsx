@@ -20,7 +20,8 @@ import { fetchAllCategories } from '../../shared/services/categories.service';
 import { MdRefresh } from 'react-icons/md';
 import { CategoryModel } from '../../shared/models/categories/category.model';
 import styles from '../../assets/styles/Admin.module.css';
-import { Container } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
+import { FaEdit, FaPlus } from 'react-icons/fa';
 
 function AdminCategories() {
     const [page, setPage] = useState(0);
@@ -76,6 +77,11 @@ function AdminCategories() {
             <TableCell>Category</TableCell>
             <TableCell>Description</TableCell>
             <TableCell align="right">
+                <Tooltip title="Create new category">
+                  <Button variant="outline-secondary" size='sm' href={`/admin/categories/new`}>
+                      <FaPlus/>
+                  </Button>
+                </Tooltip>
                 <Tooltip title="Refresh">
                     <IconButton onClick={() => {loadCategories()}}>
                         <MdRefresh/>
@@ -94,6 +100,11 @@ function AdminCategories() {
                 {row.description}
               </TableCell>
               <TableCell align="right">
+                <Tooltip title={`Edit ${row.name}`}>
+                  <Button variant="outline-secondary" size='sm' href={`/admin/categories/${row.id}`}>
+                      <FaEdit/>
+                  </Button>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}
