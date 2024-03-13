@@ -17,6 +17,11 @@ class SubcategoryModel {
      * subcategory description
      */
     description:string = '';
+
+    /**
+     * Used by the editor page
+     */
+    dirty: boolean = false;
     /**
      * 
      * @param dataset 

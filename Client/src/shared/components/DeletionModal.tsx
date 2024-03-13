@@ -18,7 +18,9 @@ const deleteModalPropTypes = {
     parent: PropTypes.string, 
     id: PropTypes.string.isRequired, 
     deletion: PropTypes.func.isRequired, 
-    callback:PropTypes.func
+    callback:PropTypes.func,
+    buttonBody:PropTypes.any,
+    buttonSize:PropTypes.string
 };
 
 type deleteModalTypes = InferProps<typeof deleteModalPropTypes>;
@@ -33,7 +35,7 @@ type deleteModalTypes = InferProps<typeof deleteModalPropTypes>;
  *  @param callback: function to be called after deletion
  * @returns JSX.Element containing a delete button and a confirmation prompt modal
  */
-function DeletionModal({ title, parent, id, deletion, callback }: deleteModalTypes) {
+function DeletionModal({ title, parent, id, deletion, callback, buttonBody="Delete", buttonSize=undefined }: deleteModalTypes) {
     const [visible, setVisible] = useState(false);
 
     /**
@@ -80,7 +82,7 @@ function DeletionModal({ title, parent, id, deletion, callback }: deleteModalTyp
 
     return (
         <>
-            <Button variant="outline-danger" onClick={handleShow}>Delete</Button>
+            <Button variant="outline-danger" size={buttonSize == 'sm' ? 'sm' : buttonSize == 'lg' ? 'lg' : undefined} onClick={handleShow}>{buttonBody}</Button>
 
             <Modal
                 show={visible}

@@ -4,6 +4,7 @@
 
 import { CATEGORIES_API_URL, SUBCATEGORIES_API_URL } from "../../constants";
 import { CategoryModel } from "../models/categories/category.model";
+import { SubcategoryModel } from "../models/categories/subcategory.model";
 import { hasJson } from "../utils/responseHelpers";
 
 /**
@@ -86,7 +87,7 @@ async function createCategory(category:CategoryModel) {
  * @param id 
  * @param category 
  */
-async function editCategory(id:string|undefined, category:CategoryModel) {
+async function updateCategory(id:string|undefined, category:CategoryModel) {
     if(!id) {
         console.error("Tried to edit category with no id?");
         return;
@@ -123,7 +124,12 @@ async function editCategory(id:string|undefined, category:CategoryModel) {
  * @param categoryId the ID of the parent category
  * @returns json response
  */
-async function fetchAllSubcategories(categoryId:string) {
+async function fetchAllSubcategories(categoryId:string|undefined) {
+    if(!categoryId) {
+        console.error("Tried to fetch subcategories without id?");
+        return;
+    }
+
     const token = localStorage.getItem('token') ?? '';
     const response = await fetch(`${SUBCATEGORIES_API_URL}`.replace(':categoryId', categoryId), {
         headers: {
@@ -138,4 +144,83 @@ async function fetchAllSubcategories(categoryId:string) {
     return response.json();
 }
 
-export {fetchAllCategories, fetchCategory, createCategory, editCategory, fetchAllSubcategories};
+/**
+ * Calls the API to create a new subcategory
+ * @param categoryId
+ * @param subcategory 
+ */
+async function createSubcategory(categoryId:string|undefined, subcategory:SubcategoryModel) {
+    if(!categoryId) {
+        console.error("Tried to submit subcategory with no category id?");
+        return;
+    }
+
+    if(!subcategory) {
+        console.error("Tried to submit subcategory with no data?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${SUBCATEGORIES_API_URL}`.replace(':categoryId', categoryId), {
+        method: "POST",
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            subcategory: {
+                name: subcategory.name,
+                description: subcategory.description
+        }}),
+    });
+
+    if (!response.ok && !hasJson(response)) {
+        throw new Error(response.statusText);
+    }
+
+    return response;
+}
+
+/**
+ * Calls the API to edit a subcategory
+ * @param id 
+ * @param subcategory 
+ */
+async function updateSubcategory(categoryId:string|undefined, id:string|undefined, subcategory:SubcategoryModel) {
+    if(!categoryId) {
+        console.error("Tried to submit subcategory with no category id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to edit subcategory with no id?");
+        return;
+    }
+
+    if(!subcategory) {
+        console.error("Tried to edit subcategory with no data?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${SUBCATEGORIES_API_URL}/${id}`.replace(':categoryId', categoryId), {
+        method: "PUT",
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            subcategory: {
+                name: subcategory.name,
+                description: subcategory.description
+        }}),
+    });
+
+    if (!response.ok && !hasJson(response)) {
+        throw new Error(response.statusText);
+    }
+
+    return response;
+}
+
+export {fetchAllCategories, fetchCategory, createCategory, updateCategory, fetchAllSubcategories, createSubcategory, updateSubcategory};

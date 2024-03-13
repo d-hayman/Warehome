@@ -49,7 +49,7 @@ function AdminCategories() {
 
     useEffect(() => {
         loadCategories();
-    }, [])
+    }, []);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = Math.max(0, (1 + page) * rowsPerPage - totalCategories);
@@ -74,8 +74,8 @@ function AdminCategories() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Category</TableCell>
-            <TableCell>Description</TableCell>
+            <TableCell><b>Category</b></TableCell>
+            <TableCell><b>Description</b></TableCell>
             <TableCell align="right">
                 <Tooltip title="Create new category">
                   <Button variant="outline-secondary" size='sm' href={`/admin/categories/new`}>
