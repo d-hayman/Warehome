@@ -12,6 +12,7 @@ import AdminCategoriesEdit from '../features/admin/AdminCategoriesEdit';
 import Breadcrumbs from '../shared/components/Breadcrumbs';
 import NavBar from './NavBar';
 import LeftNav from './LeftNav';
+import PermissionCheck from '../shared/components/PermissionCheck';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -27,11 +28,13 @@ function AppRoutes() {
                     <Route path="/dashboard" element={<DashboardPage/>}/>
                 </Route>
 
+                <Route element={<PermissionCheck permission='AdminPanel:view'/>}>
                 <Route element={<Breadcrumbs/>}>
                     <Route path="/admin" element={<AdminRoot/>}/>
                     <Route path="/admin/users" element={<AdminUsers/>}/>
                     <Route path="/admin/categories" element={<AdminCategories/>}/>
                     <Route path="/admin/categories/:id" element={<AdminCategoriesEdit/>}/>
+                </Route>
                 </Route>
             </Route>
         </Routes>

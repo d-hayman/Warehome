@@ -17,7 +17,7 @@ import { SearchContext } from './providers/SearchProvider';
  * @returns JSX.Element for the nav bar
  */
 function NavBar() {
-    const hasAdminPanel = (localStorage.getItem("permissions")??'').includes("AdminPanel:view") || true;
+    const hasAdminPanel = (localStorage.getItem("permissions")??'').includes("AdminPanel:view");
 
     const {searchQuery, emitSearch} = useContext(SearchContext);
     const [search, setSearch] = useState(searchQuery);

@@ -26,7 +26,7 @@ function makeSubpaths(path:string): string[]{
 }
 
 /**
- * 
+ * Route element wrapper to prepend a set of routes with links to parent routes
  * @param param0 
  * @returns 
  */
