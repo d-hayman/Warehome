@@ -5,7 +5,14 @@
 import { useEffect, useState } from "react";
 import { CategoryModel } from "../../shared/models/categories/category.model";
 import { useNavigate, useParams } from "react-router-dom";
-import { createCategory, updateCategory, fetchAllSubcategories, fetchCategory, createSubcategory, updateSubcategory } from "../../shared/services/categories.service";
+import { 
+    fetchCategory, 
+    createCategory, 
+    updateCategory, 
+    fetchAllSubcategories, 
+    createSubcategory, 
+    updateSubcategory, 
+    deleteSubcategory } from "../../shared/services/categories.service";
 import { Alert, Button, ButtonGroup, Container, Form } from "react-bootstrap";
 import { listifyErrors } from "../../shared/utils/responseHelpers";
 import { 
@@ -213,9 +220,21 @@ function AdminCategoriesEdit() {
     /**
      * Remove a subcategory from the subcategories array
      */
-    const removeSubcategory = (id:string) => {
-        setSubcategories(subcategories.filter(sub => sub.id !== id));
-        setTotalSubcategories(totalSubcategories-1);
+    const removeSubcategory = async (subcategoryId:string) => {
+        if((""+subcategoryId).startsWith("new")){
+            setSubcategories(subcategories.filter(sub => sub.id !== subcategoryId));
+            setTotalSubcategories(totalSubcategories-1);
+        } else {
+            try {
+                await deleteSubcategory(id, subcategoryId);
+                setSubcategories(subcategories.filter(sub => sub.id !== subcategoryId));
+                setTotalSubcategories(totalSubcategories-1);
+            } catch (e) {
+                setErrorAlertBody({error: `${e}`});
+                setShowErrorAlert(true);
+                console.error("Failed to delete subcategory: ", e);
+            }
+        }
     };
 
     return (
@@ -309,7 +328,13 @@ function AdminCategoriesEdit() {
                             <Button size="sm" variant="outline-primary" disabled={!row.dirty} onClick={()=>submitSubcategory(row)}>
                                 <FaSave/>
                             </Button>
-                            <DeletionModal title={row.name} deletion={removeSubcategory} id={row.id} buttonBody={<FaTrash/>} buttonSize='sm'/>
+                            <DeletionModal 
+                                title={row.name} 
+                                deletion={removeSubcategory} 
+                                id={row.id} 
+                                buttonBody={<FaTrash/>} 
+                                buttonSize='sm'
+                            />
                         </ButtonGroup>
                     </TableCell>
                 </TableRow>

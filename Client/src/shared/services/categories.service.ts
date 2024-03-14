@@ -120,6 +120,31 @@ async function updateCategory(id:string|undefined, category:CategoryModel) {
 }
 
 /**
+ * Calls the API to delete a category
+ * @param id 
+ */
+async function deleteCategory(id:string|undefined) {
+    if(!id) {
+        console.error("Tried to delete category with no id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${CATEGORIES_API_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(response.status === 204) {
+        return null;
+    }
+
+    throw new Error(response.statusText);
+}
+
+/**
  * Calls the subcategories API to fetch all subcategories for a given category
  * @param categoryId the ID of the parent category
  * @returns json response
@@ -223,4 +248,46 @@ async function updateSubcategory(categoryId:string|undefined, id:string|undefine
     return response;
 }
 
-export {fetchAllCategories, fetchCategory, createCategory, updateCategory, fetchAllSubcategories, createSubcategory, updateSubcategory};
+/**
+ * Calls the API to delete a subcategory
+ * @param categoryId
+ * @param id 
+ */
+async function deleteSubcategory(categoryId:string|undefined, id:string|undefined) {
+    if(!categoryId) {
+        console.error("Tried to delete subcategory with no category id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to delete subcategory with no id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${SUBCATEGORIES_API_URL}/${id}`.replace(':categoryId', categoryId), {
+        method: "DELETE",
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(response.status === 204) {
+        return null;
+    }
+
+    throw new Error(response.statusText);
+}
+
+export {
+    fetchAllCategories, 
+    fetchCategory, 
+    createCategory, 
+    updateCategory, 
+    deleteCategory,
+
+    fetchAllSubcategories, 
+    createSubcategory, 
+    updateSubcategory, 
+    deleteSubcategory
+};

@@ -16,12 +16,13 @@ import {
 } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
-import { fetchAllCategories } from '../../shared/services/categories.service';
+import { deleteCategory, fetchAllCategories } from '../../shared/services/categories.service';
 import { MdRefresh } from 'react-icons/md';
 import { CategoryModel } from '../../shared/models/categories/category.model';
 import styles from '../../assets/styles/Admin.module.css';
-import { Button, Container } from 'react-bootstrap';
-import { FaEdit, FaPlus } from 'react-icons/fa';
+import { Button, ButtonGroup, Container } from 'react-bootstrap';
+import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
+import DeletionModal from '../../shared/components/DeletionModal';
 
 function AdminCategories() {
     const [page, setPage] = useState(0);
@@ -100,11 +101,21 @@ function AdminCategories() {
                 {row.description}
               </TableCell>
               <TableCell align="right">
-                <Tooltip title={`Edit ${row.name}`}>
-                  <Button variant="outline-secondary" size='sm' href={`/admin/categories/${row.id}`}>
-                      <FaEdit/>
-                  </Button>
-                </Tooltip>
+                <ButtonGroup>
+                  <Tooltip title={`Edit ${row.name}`}>
+                    <Button variant="outline-secondary" size='sm' href={`/admin/categories/${row.id}`}>
+                        <FaEdit/>
+                    </Button>
+                  </Tooltip>
+                  <DeletionModal 
+                    title={row.name} 
+                    deletion={deleteCategory} 
+                    id={row.id} 
+                    callback={loadCategories} 
+                    buttonBody={<FaTrash/>} 
+                    buttonSize='sm'
+                  />
+                </ButtonGroup>
               </TableCell>
             </TableRow>
           ))}
