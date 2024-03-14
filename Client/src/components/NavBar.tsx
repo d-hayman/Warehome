@@ -2,8 +2,8 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 import { Tooltip } from '@mui/material';
-import { Alert, Button, Container, Form, InputGroup, Nav, Navbar } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Button, Container, Form, InputGroup, Nav, Navbar } from 'react-bootstrap';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { GiSaucepan } from 'react-icons/gi';
 import { MdLogout, MdSettings } from 'react-icons/md';
 import { useContext, useState } from 'react';
@@ -11,8 +11,6 @@ import { FaMagnifyingGlass } from 'react-icons/fa6';
 import styles from '../assets/styles/NavBar.module.css'
 import { logout } from '../shared/services/auth.service';
 import { SearchContext } from './providers/SearchProvider';
-
-const excludeRoutes = ["/", "/signup"];
 
 /**
  * NavBar component
@@ -24,9 +22,6 @@ function NavBar() {
     const {searchQuery, emitSearch} = useContext(SearchContext);
     const [search, setSearch] = useState(searchQuery);
 
-    const [logoutError, setLogoutError] = useState(false);
-
-    let location = useLocation();
     const navigate = useNavigate();
 
     /**
@@ -36,28 +31,18 @@ function NavBar() {
         try {
             const success = await logout();
             if(!success) {
-                setLogoutError(true);
+                console.error("Bad response while logging out?");
             }
             navigate('/');
         } catch(e) {
             console.error("Failed to logout: ", e);
             localStorage.clear();
-            setLogoutError(true);
             navigate('/');
         }
     }
-
-    if(excludeRoutes.indexOf(location.pathname) != -1){
-        return (<>
-            { logoutError &&
-                <Alert variant="danger" onClose={() => setLogoutError(false)} dismissible>
-                    <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
-                    An error occurred while logging out
-                </Alert>}
-        </>);
-    }
     
     return (
+    <div className='app'>
         <Navbar bg="primary" data-bs-theme="dark">
             <Container>
                 <Navbar.Brand href="/dashboard">Warehome</Navbar.Brand>
@@ -104,6 +89,11 @@ function NavBar() {
                 </Tooltip>
             </Container>
         </Navbar>
+        
+        <div className='app_body'>
+            <Outlet/>
+        </div>
+    </div>
     );
 }
 

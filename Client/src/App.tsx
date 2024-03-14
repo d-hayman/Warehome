@@ -11,13 +11,7 @@ function App() {
   return (
     <SearchProvider>
     <Router>
-      <div className='app'>
-        <NavBar/>
-        <div className='app_body'>
-          <LeftNav/>
           <AppRoutes />
-        </div>
-      </div>
     </Router>
     </SearchProvider>
   )

@@ -5,7 +5,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Accordion, Button, Container, Navbar, Offcanvas } from "react-bootstrap";
 import { MdMenu } from "react-icons/md";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import styles from '../assets/styles/LeftNav.module.css';
 import { ContainerModel } from "../shared/models/container.model";
 import { CategoryModel } from "../shared/models/categories/category.model";
@@ -16,8 +16,6 @@ import { isAccordionKeyActive } from "../shared/utils/contextHelpers";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { SubcategoryModel } from "../shared/models/categories/subcategory.model";
 import { SearchContext } from "./providers/SearchProvider";
-
-const excludeRoutes = ["", "signup", "admin"];
 
 /**
  * LeftNav component for nested container accordions
@@ -34,7 +32,7 @@ function ContainerNav({containerData}:{containerData:ContainerModel}) {
    * @param e eventKey
    * @returns void
    */
-  const fetchChildren = async (e:string) => {
+  const fetchChildren = async (_:string) => {
     // if the accordion item for this container was already active and is now closing then we don't have to refresh data
     if(active) return; 
 
@@ -86,7 +84,7 @@ function CategoryNav({categoryData}:{categoryData:CategoryModel}) {
    * @param e 
    * @returns 
    */
-  const fetchSubcategories = async (e:string) => {
+  const fetchSubcategories = async (_:string) => {
     // if the accordion item for this category was already active and is now closing then we don't have to refresh data
     if(active) return; 
 
@@ -220,29 +218,22 @@ function LeftNav() {
         }
       };
 
-      if(excludeRoutes.indexOf(location.pathname.split('/')[1]) == -1){
-        fetchContainers();
-        fetchCategories();
-      }
+      fetchContainers();
+      fetchCategories();
     }, [location.pathname])
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  if(excludeRoutes.indexOf(location.pathname.split('/')[1]) != -1){
-    return (<>
-    </>);
-    }
     
-    return (
-        <>
-        <Navbar bg="light" data-bs-theme="dark" className={`d-lg-none ${styles.leftnav_navbar}`}>
-            <Container>
-                <Button variant="secondary" onClick={handleShow}>
-                    <MdMenu/>
-                </Button>
-            </Container>
-        </Navbar>
+  return (
+    <>
+      <Navbar bg="light" data-bs-theme="dark" className={`d-lg-none ${styles.leftnav_navbar}`}>
+          <Container>
+              <Button variant="secondary" onClick={handleShow}>
+                  <MdMenu/>
+              </Button>
+          </Container>
+      </Navbar>
 
       <Offcanvas show={show} onHide={handleClose} responsive="lg" className={styles.leftnav_top}>
         <Offcanvas.Header closeButton>
@@ -262,8 +253,12 @@ function LeftNav() {
           </div>
         </Offcanvas.Body>
       </Offcanvas>
-        </>
-    );
+      
+      <div style={{flex:1}}>
+        <Outlet/>
+      </div>
+    </>
+  );
 }
 
 export default LeftNav
