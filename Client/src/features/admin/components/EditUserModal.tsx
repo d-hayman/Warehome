@@ -82,7 +82,7 @@ function EditUserModal({callback, user = undefined}: {callback: Function, user?:
             backdrop="static"
             centered>
             <Modal.Header closeButton>
-                <Modal.Title>{user?"Edit":"Create"} User</Modal.Title>
+                <Modal.Title>{user?"Edit":"Create"} User{user?` ${user.username}`:''}</Modal.Title>
             </Modal.Header>
             <Modal.Body 
                 onKeyDown={(e) => {

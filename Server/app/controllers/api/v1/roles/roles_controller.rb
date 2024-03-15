@@ -1,7 +1,7 @@
 module Api
     module V1
       class Roles::RolesController < AuthenticatedController
-        before_action -> {check_basic_auth( :Role, params[:action] )}
+        before_action -> {check_permissions( :Role, params[:action] )}
         before_action :set_role, only: %i[show update destroy]
 
         def index

@@ -5,7 +5,7 @@
 import { Grid, Paper } from "@mui/material";
 import { Container } from "react-bootstrap";
 import { IconType } from "react-icons";
-import { FaUser } from "react-icons/fa";
+import { FaTools, FaUser } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { Link } from "react-router-dom";
 
@@ -19,6 +19,7 @@ function AdminRoot () {
 
     const tiles:Tile[] = [
         {icon:FaUser,title:"Users",link:"users"},
+        {icon:FaTools,title:"Roles",link:"roles"},
         {icon:MdCategory,title:"Categories",link:"categories"}
     ];
 
