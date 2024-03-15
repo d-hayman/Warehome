@@ -19,7 +19,6 @@ import { useEffect, useState } from 'react';
 import { deleteCategory, fetchAllCategories } from '../../shared/services/categories.service';
 import { MdRefresh } from 'react-icons/md';
 import { CategoryModel } from '../../shared/models/categories/category.model';
-import styles from '../../assets/styles/Admin.module.css';
 import { Button, ButtonGroup, Container } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import DeletionModal from '../../shared/components/DeletionModal';

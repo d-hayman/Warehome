@@ -16,11 +16,13 @@ import {
 } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
-import { fetchAllUsers } from '../../shared/services/users.service';
-import { Button, Container } from 'react-bootstrap';
+import { deleteUser, fetchAllUsers } from '../../shared/services/users.service';
+import { ButtonGroup, Container } from 'react-bootstrap';
 import { MdRefresh } from 'react-icons/md';
-import { FaKey } from 'react-icons/fa';
 import { UserModel } from '../../shared/models/user.model';
+import EditUserModal from './components/EditUserModal';
+import DeletionModal from '../../shared/components/DeletionModal';
+import { FaTrash } from 'react-icons/fa';
 
 function AdminUsers() {
     const [page, setPage] = useState(0);
@@ -76,11 +78,12 @@ function AdminUsers() {
           <TableRow>
             <TableCell>Username</TableCell>
             <TableCell align="right">
-                <Tooltip title="Refresh">
-                    <IconButton onClick={() => {loadUsers()}}>
-                        <MdRefresh/>
-                    </IconButton>
-                </Tooltip>
+              <EditUserModal callback={loadUsers}/>
+              <Tooltip title="Refresh">
+                <IconButton onClick={() => {loadUsers()}}>
+                  <MdRefresh/>
+                </IconButton>
+              </Tooltip>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -91,6 +94,20 @@ function AdminUsers() {
                 {row.username}
               </TableCell>
               <TableCell align="right">
+                <ButtonGroup>
+                  <EditUserModal 
+                    callback={loadUsers} 
+                    user={row}
+                  />
+                  <DeletionModal 
+                    deletion={deleteUser} 
+                    id={row.id} 
+                    title={row.username} 
+                    callback={loadUsers} 
+                    buttonBody={<FaTrash/>} 
+                    buttonSize='sm'
+                  />
+                </ButtonGroup>
               </TableCell>
             </TableRow>
           ))}

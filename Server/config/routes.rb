@@ -48,7 +48,7 @@ Rails.application.routes.draw do
       end
 
       scope module: 'users' do
-        resources :users, only: [:index, :show]
+        resources :users, only: [:index, :show, :create, :update, :destroy]
       end
 
       scope module: 'roles' do
