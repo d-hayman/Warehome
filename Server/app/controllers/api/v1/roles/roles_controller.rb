@@ -16,7 +16,7 @@ module Api
         end
 
         def show
-            render json: @role
+            render json: include_permissions_and_users(@role)
         end
 
         def create
@@ -42,6 +42,9 @@ module Api
         end
 
         private
+        def include_permissions_and_users(role)
+            role.as_json.merge(permissions: role.permissions, users: role.users)
+        end
 
         def set_role
           @role = Role.find(params[:id])

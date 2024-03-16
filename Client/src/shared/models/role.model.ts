@@ -1,6 +1,10 @@
 /**
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
+
+import { PermissionModel } from "./permission.model";
+import { UserModel } from "./user.model";
+
 /**
  * Class for representing role records
  */
@@ -13,6 +17,14 @@ class RoleModel {
      * role name
      */
     name:string = '';
+    /**
+     * Permission List
+     */
+    permissions:PermissionModel[] = [];
+    /**
+     * User List
+     */
+    users:UserModel[] = [];
 
     /**
      * Parse response data to create a role model object
@@ -23,6 +35,19 @@ class RoleModel {
         const role = new RoleModel();
         role.id = dataset.id ?? '';
         role.name = dataset.name ?? '';
+
+        if(dataset.permissions !== undefined && Array.isArray(dataset.permissions)){
+            for(const permission of dataset.permissions){
+                role.permissions.push(PermissionModel.buildPermissionData(permission));
+            }
+        }
+
+        if(dataset.users !== undefined && Array.isArray(dataset.users)){
+            for(const user of dataset.users){
+                role.users.push(UserModel.buildUserData(user));
+            }
+        }
+
         return role;
     }
 

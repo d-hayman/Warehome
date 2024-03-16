@@ -14,6 +14,7 @@ import NavBar from './NavBar';
 import LeftNav from './LeftNav';
 import PermissionCheck from '../shared/components/PermissionCheck';
 import AdminRoles from '../features/admin/AdminRoles';
+import AdminRolesEdit from '../features/admin/AdminRolesEdit';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -36,6 +37,7 @@ function AppRoutes() {
                     <Route path="/admin/categories" element={<AdminCategories/>}/>
                     <Route path="/admin/categories/:id" element={<AdminCategoriesEdit/>}/>
                     <Route path="/admin/roles" element={<AdminRoles/>}/>
+                    <Route path="/admin/roles/:id" element={<AdminRolesEdit/>}/>
                 </Route>
                 </Route>
             </Route>

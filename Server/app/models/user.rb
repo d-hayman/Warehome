@@ -6,7 +6,7 @@ class User < ApplicationRecord
          :rememberable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_and_belongs_to_many :roles
-  has_many :permissions, through: :roles
+  has_many :permissions, -> { distinct }, through: :roles
 
   has_many :checkouts
 

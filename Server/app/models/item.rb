@@ -6,7 +6,7 @@ class Item < ApplicationRecord
     has_many :checkouts, through: :containments
 
     has_and_belongs_to_many :subcategories
-    has_many :categories, through: :subcategories
+    has_many :categories, -> { distinct }, through: :subcategories
 
     belongs_to :creator, class_name: "User", optional: true
 
