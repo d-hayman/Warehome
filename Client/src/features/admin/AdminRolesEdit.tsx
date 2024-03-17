@@ -190,8 +190,8 @@ function AdminRolesEdit() {
      * @param id 
      */
     const handleClick = (_: React.MouseEvent<unknown>, id: string, 
-        //TODO TODO: address this eyesore ASAP! This codebase needs shared table components so bad it hurts
         [selected, setSelected]: [readonly string[], React.Dispatch<React.SetStateAction<readonly string[]>>]) => {
+
       const selectedIndex = selected.indexOf(id);
       let newSelected: readonly string[] = [];
   
@@ -245,11 +245,13 @@ function AdminRolesEdit() {
     
     useEffect(() => {
         loadUsers(undefined);
-    }, [userRowsPerPage, userPage])
+    }, [userRowsPerPage, userPage]);
 
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyUserRows = Math.max(0, userRowsPerPage - users.length);
-
+    /**
+     * 
+     * @param _ 
+     * @param newPage 
+     */
     const handleChangeUserPage = (
         _: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
@@ -257,12 +259,19 @@ function AdminRolesEdit() {
         setUserPage(newPage);
     };
 
+    /**
+     * 
+     * @param event 
+     */
     const handleChangeUserRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setUserRowsPerPage(parseInt(event.target.value, 10));
         setUserPage(0);
     };
+
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyUserRows = Math.max(0, userRowsPerPage - users.length);
 
     return (
     <Container>
