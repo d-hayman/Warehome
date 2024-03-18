@@ -15,6 +15,7 @@ import LeftNav from './LeftNav';
 import PermissionCheck from '../shared/components/PermissionCheck';
 import AdminRoles from '../features/admin/AdminRoles';
 import AdminRolesEdit from '../features/admin/AdminRolesEdit';
+import ValidateRoute from './ValidateRoute';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -25,6 +26,8 @@ function AppRoutes() {
         <Routes>
             <Route path="/" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
+
+            <Route element={<ValidateRoute/>}>
             <Route element={<NavBar/>}>
                 <Route element={<LeftNav/>}>
                     <Route path="/dashboard" element={<DashboardPage/>}/>
@@ -40,6 +43,7 @@ function AppRoutes() {
                     <Route path="/admin/roles/:id" element={<AdminRolesEdit/>}/>
                 </Route>
                 </Route>
+            </Route>
             </Route>
         </Routes>
     )

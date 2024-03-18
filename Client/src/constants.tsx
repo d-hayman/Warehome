@@ -7,6 +7,11 @@ export const LOGIN_API_URL =
     process.env.NODE_ENV === "test" 
         ? "http://mocked-api-url" 
         : import.meta.env.VITE_LOGIN_API_URL;
+        
+export const VALIDATE_API_URL = 
+    process.env.NODE_ENV === "test" 
+        ? "http://mocked-api-url" 
+        : import.meta.env.VITE_VALIDATE_API_URL;
 
 export const SIGNUP_API_URL = 
     process.env.NODE_ENV === "test" 
@@ -52,3 +57,8 @@ export const ITEMS_API_URL =
     process.env.NODE_ENV === "test"
         ? "http://mocked-api-url"
         : import.meta.env.VITE_ITEMS_API_URL;
+
+export const VALIDATE_INTERVAL = 
+    process.env.NODE_ENV === "test"
+        ? 20
+        : import.meta.env.VITE_VALIDATE_INTERVAL;

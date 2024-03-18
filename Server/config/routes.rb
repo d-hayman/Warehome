@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
   #API routes
+  scope module: 'users' do
+    get "validate", to: "validate#validate"
+  end
   namespace :api do
     namespace :v1 do
 

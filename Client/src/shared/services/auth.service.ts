@@ -1,7 +1,7 @@
 /**
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
-import { LOGIN_API_URL, SIGNUP_API_URL, LOGOUT_API_URL } from "../../constants";
+import { LOGIN_API_URL, SIGNUP_API_URL, LOGOUT_API_URL, VALIDATE_API_URL } from "../../constants";
 import { hasJson } from "../utils/responseHelpers";
 
 /**
@@ -28,6 +28,27 @@ async function login(username: string, password: string) {
     localStorage.setItem("token", response.headers.get("Authorization")??'');
     localStorage.setItem("permissions", res.status.data.user.permissions);
     localStorage.setItem("loggedInAs", username);
+
+    return true;
+}
+
+/**
+ * Calls the validate API
+ */
+async function validate() {
+    const token = localStorage.getItem("token")??'';
+    const response = await fetch(`${VALIDATE_API_URL}`, {
+        headers: {
+            "Authorization": token
+        }
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    // update the auth token
+    localStorage.setItem("token", response.headers.get("Authorization")??'');
 
     return true;
 }
@@ -75,4 +96,4 @@ async function logout() {
     return true;
 }
 
-export { login, signup, logout };
+export { login, validate, signup, logout };
