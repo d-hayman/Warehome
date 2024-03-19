@@ -29,3 +29,8 @@
     border-radius: 8px;
     padding: 1rem !important;
 }
+
+.item_card > .item_card_inner > a {
+    color: black;
+    text-decoration: unset;
+}

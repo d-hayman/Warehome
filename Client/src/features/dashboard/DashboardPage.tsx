@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react"
 import { MdGridView, MdList } from "react-icons/md";
 import { fetchAllItems } from "../../shared/services/items.service";
 import { ItemModel } from "../../shared/models/item.model";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SearchContext } from "../../components/providers/SearchProvider";
 
 /**
@@ -119,6 +119,7 @@ function DashboardPage(){
                 {items.map((item:ItemModel) => (
                     <Col key={item.id} xs={12} md={itemDisplay == "1" ? 4 : 12} className={styles.item_card}>
                         <Container className={styles.item_card_inner}>
+                        <Link to={`/item/${item.id}`}>
                             <Row>
                                 <Col xs={4} md={itemDisplay == "1" ? 12 : 4}>
                                     <img src={item.image_url ? item.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
@@ -128,6 +129,7 @@ function DashboardPage(){
                                     {item.notes}
                                 </Col>
                             </Row>
+                        </Link>
                         </Container>
                     </Col>
                 ))}

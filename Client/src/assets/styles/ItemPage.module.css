@@ -1,0 +1,30 @@
+.page_outer {
+    padding: 2rem !important;
+    max-width: unset !important;
+    width: 100%;
+    margin-left: unset !important;
+    margin-right: unset !important;
+    height: calc(100vh - 56px);
+    overflow: auto;
+}
+
+@media (max-width:991px) {
+    .page_outer{
+        height: calc(100vh - 110px);
+    }
+}
+
+.item_details {
+    padding-bottom: 2rem !important;
+    margin: unset !important;
+    border-bottom: 1px solid #999;
+}
+
+.item_image {
+    max-height: 200px; 
+    max-width: 100%;
+}
+
+.item_attributes {
+    text-align: left;
+}
