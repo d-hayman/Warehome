@@ -42,18 +42,18 @@ const Breadcrumbs = () => {
           .map(
             (path, i, row) => {
               if(row.length === i+1){
-                return(<>
-                  {path.substring(path.lastIndexOf('/')+1)}
-                </>)
+                return(
+                  <span key={path}>{path.substring(path.lastIndexOf('/')+1)}</span>
+                )
               } else {
-                return(<>
+                return(<span key={path}>
                   <Link 
                     to={path} 
                     style={{color:"black"}}>
                       {path.substring(path.lastIndexOf('/')+1)}
                   </Link>
                   {" > "}
-                </>)
+                </span>)
               }
             }
           )}

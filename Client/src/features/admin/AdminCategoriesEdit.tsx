@@ -302,7 +302,7 @@ function AdminCategoriesEdit() {
             </TableHead>
             <TableBody>
               {subcategories.slice(page * rowsPerPage, (page+1) * rowsPerPage).map((row) => (
-                <TableRow >
+                <TableRow key={row.id}>
                     <TableCell component="th" scope="row">
                         <Form.Control 
                             type="text" 
