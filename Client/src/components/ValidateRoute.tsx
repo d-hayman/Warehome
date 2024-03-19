@@ -27,18 +27,29 @@ function ValidateRoute ({routeTo="/"}:permissionCheckTypes) {
     const MINUTE_MS = 60000;
 
     useEffect(() => {
-      const interval = setInterval(async () => {
+      /**
+       * Calls the validate API and logs the user out if the token is irredeemably expired
+       */
+      const testToken = async () => {
         try {
-            const success = await validate();
-            if(!success) {
-                await logout();
-                navigate(routeTo??'/');
-            }
+          const success = await validate();
+          if(!success) {
+              await logout();
+              navigate(routeTo??'/');
+          }
         } catch(e) {
             console.error("Failed to validate: ", e);
             localStorage.clear();
             navigate(routeTo??'/');
         }
+      }
+
+      // initial call on route
+      testToken();
+
+      // call testToken every few minutes to refresh the token
+      const interval = setInterval(() => {
+        testToken();
       }, MINUTE_MS * VALIDATE_INTERVAL);
 
       return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
