@@ -1,7 +1,7 @@
 /**
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
-import { FaEdit, FaEye, FaEyeSlash, FaPlusCircle } from 'react-icons/fa';
+import { FaEdit, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 import { createUser, updateUser } from '../../../shared/services/users.service';
 import { Alert, Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import { useState } from 'react';
@@ -74,7 +74,7 @@ function EditUserModal({callback, user = undefined}: {callback: Function, user?:
 
     return (
         <>
-        <Button variant="outline-secondary" size='sm' onClick={handleShow}>{user? <FaEdit/> :<FaPlusCircle/>}</Button>
+        <Button variant="outline-secondary" size='sm' onClick={handleShow}>{user? <FaEdit/> :<FaPlus/>}</Button>
 
         <Modal
             show={visible}

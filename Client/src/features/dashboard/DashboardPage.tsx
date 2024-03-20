@@ -2,7 +2,7 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { ButtonGroup, Col, Container, Row, ToggleButton } from "react-bootstrap"
+import { Button, ButtonGroup, Col, Container, Form, Row, ToggleButton } from "react-bootstrap"
 import Paginator from "../../shared/components/Pagination"
 import styles from "../../assets/styles/Dashboard.module.css"
 import noImage from '../../assets/img/imagenotfound.png';
@@ -12,13 +12,20 @@ import { fetchAllItems } from "../../shared/services/items.service";
 import { ItemModel } from "../../shared/models/item.model";
 import { Link, useSearchParams } from "react-router-dom";
 import { SearchContext } from "../../components/providers/SearchProvider";
+import { Tooltip } from "@mui/material";
+import { FaPlus } from "react-icons/fa";
+
+enum modes {
+    grid,
+    list
+}
 
 /**
  * Dashboard Page
  * @returns JSX.Element for the dashboard
  */
 function DashboardPage(){
-    const [itemDisplay, setItemDisplay] = useState("1");
+    const [itemDisplay, setItemDisplay] = useState(modes.grid);
     const [items, setItems] = useState<ItemModel[]>([]);
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -35,6 +42,7 @@ function DashboardPage(){
      */
     const loadItems = async () => {
         try{
+            setSearchParams({page: page, q: searchQuery} as unknown as URLSearchParams);
             let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories);
             if(data.items){
                 const items = [];
@@ -51,7 +59,6 @@ function DashboardPage(){
                 }
             }
         
-            setSearchParams({page: page, q: searchQuery} as unknown as URLSearchParams);
         } catch(e) {
             console.error(e);
         }
@@ -81,8 +88,45 @@ function DashboardPage(){
     
     return (
         <Container className={styles.dashboard_outer}>
-            <Row>
-                <Col xl={10} lg={12} md={10} xs={12}>
+            <Row className="align-items-center">
+                <Col md={10} xs={12} className={styles.dashboard_display_toggle}>
+                    <Form.Group controlId="formGridState" style={{display:"inline-block"}}>
+                        <Form.Select defaultValue="Created">
+                            <option>Created</option>
+                            <option>Description</option>
+                        </Form.Select>
+                    </Form.Group>
+                    <Tooltip title="Create new item" style={{marginTop:"-5px", marginLeft:"1rem"}}>
+                        <Button variant="outline-secondary" href={`/item/new`}>
+                            <FaPlus/>
+                        </Button>
+                    </Tooltip>
+                </Col>
+                <Col md={2} className={`d-none d-md-block ${styles.dashboard_display_toggle}`}>
+                    <ButtonGroup>
+                        <ToggleButton
+                            id="item-grid"
+                            type="radio"
+                            value={modes.grid}
+                            checked={itemDisplay === modes.grid}
+                            variant="outline-primary"
+                            onChange={(e) => setItemDisplay(modes.grid)}
+                        >
+                            <MdGridView/>
+                        </ToggleButton>
+                        <ToggleButton
+                            id="item-list"
+                            type="radio"
+                            value={modes.list}
+                            checked={itemDisplay === modes.list}
+                            variant="outline-primary"
+                            onChange={(e) => setItemDisplay(modes.list)}
+                        >
+                            <MdList/>
+                        </ToggleButton>
+                    </ButtonGroup>
+                </Col>
+                <Col xs={12} className={styles.dashboard_pagination}>
                     <Paginator
                         currentPage={page}
                         itemsPerPage={itemsPerPage}
@@ -90,41 +134,17 @@ function DashboardPage(){
                         onPageChange={handlePageChange}
                     />
                 </Col>
-                <Col xl={2} lg={12} md={2} className={`d-none d-md-block ${styles.dashboard_display_toggle}`}>
-                    <ButtonGroup>
-                        <ToggleButton
-                            id="item-grid"
-                            type="radio"
-                            value={"1"}
-                            checked={itemDisplay === "1"}
-                            variant="outline-primary"
-                            onChange={(e) => setItemDisplay(e.currentTarget.value)}
-                        >
-                            <MdGridView/>
-                        </ToggleButton>
-                        <ToggleButton
-                            id="item-list"
-                            type="radio"
-                            value={"2"}
-                            checked={itemDisplay === "2"}
-                            variant="outline-primary"
-                            onChange={(e) => setItemDisplay(e.currentTarget.value)}
-                        >
-                            <MdList/>
-                        </ToggleButton>
-                    </ButtonGroup>
-                </Col>
             </Row>
             <Row>
                 {items.map((item:ItemModel) => (
-                    <Col key={item.id} xs={12} md={itemDisplay == "1" ? 4 : 12} className={styles.item_card}>
+                    <Col key={item.id} xs={12} md={itemDisplay == modes.grid ? 4 : 12} className={styles.item_card}>
                         <Container className={styles.item_card_inner}>
                         <Link to={`/item/${item.id}`}>
                             <Row>
-                                <Col xs={4} md={itemDisplay == "1" ? 12 : 4}>
+                                <Col xs={4} md={itemDisplay == modes.grid ? 12 : 4} className={styles.item_image}>
                                     <img src={item.image_url ? item.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
                                 </Col>
-                                <Col xs={8} md={itemDisplay == "1" ? 12 : 8}>
+                                <Col xs={8} md={itemDisplay == modes.grid ? 12 : 8}>
                                     <b>{item.description}</b><br/>
                                     {item.notes}
                                 </Col>

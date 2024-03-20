@@ -28,3 +28,22 @@
 .item_attributes {
     text-align: left;
 }
+
+.item_controls {
+    width: 100%;
+    text-align: right;
+}
+
+/*form classes*/
+
+.form_outer {
+    text-align: right;
+}
+
+.form_outer > div {
+    text-align: left;
+}
+
+.submit_button {
+    margin-top: 1.5rem;
+}

@@ -20,6 +20,11 @@
     text-align: right;
 }
 
+.dashboard_pagination {
+    padding-right: 2rem !important;
+    margin-top: 1rem !important;
+}
+
 .item_card {
     margin-top: 2rem !important;
 }
@@ -33,4 +38,11 @@
 .item_card > .item_card_inner > a {
     color: black;
     text-decoration: unset;
+}
+
+.item_image {
+    height: 200px;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
 }
