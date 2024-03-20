@@ -50,11 +50,11 @@ function DashboardPage(){
                     setPage(1);
                 }
             }
+        
+            setSearchParams({page: page, q: searchQuery} as unknown as URLSearchParams);
         } catch(e) {
             console.error(e);
         }
-        
-        setSearchParams({page: page, q: searchQuery} as unknown as URLSearchParams);
     }
 
     // effect for item fetching - refetch on page change
