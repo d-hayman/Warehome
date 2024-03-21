@@ -198,7 +198,7 @@ function ContainerPage () {
                                 title={container.name} 
                                 id={container.id} 
                                 buttonBody={<FaTrash/>} 
-                                callback={()=>{navigate('/dashboard')}} 
+                                callback={()=>{navigate('/dashboard');navigate(0)}} 
                             />
                             }
                         </ButtonGroup>

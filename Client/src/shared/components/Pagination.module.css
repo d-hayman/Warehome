@@ -7,5 +7,7 @@
 }
 
 .pagination_segment {
+    margin-top: 1rem !important;
+    margin-bottom: unset !important;
     display: inline-flex !important;
 }

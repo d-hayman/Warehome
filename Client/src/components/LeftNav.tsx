@@ -253,9 +253,8 @@ function LeftNav() {
           <div>
             <Offcanvas.Title>
               Containers
-              
               <Tooltip title="Create new container" style={{marginTop:"-5px", marginLeft:"1rem"}}>
-                  <Button variant="outline-secondary" onClick={()=>{navigate(`/container/new`)}}>
+                  <Button variant="outline-secondary" size="sm" onClick={()=>{navigate(`/container/new`)}}>
                       <FaPlus/>
                   </Button>
               </Tooltip>

@@ -32,7 +32,7 @@ function ContextAwareToggle({ children, eventKey, callback, buttonColor="#000000
     return (
       <button
         type="button"
-        style={{marginLeft:'auto', backgroundColor:'transparent', color:`${buttonColor}`}}
+        style={{marginLeft:'auto', backgroundColor:'transparent', color:`${buttonColor}`, padding:'.25em .5em'}}
         onClick={decoratedOnClick}
       >
         {children}

@@ -17,8 +17,8 @@ async function fetchAllItems(page:number = 1, query: string = '', categories: st
     const queryString = objectToQueryString({
         page: page,
         q: query,
-        item_ids: categories,
-        subitem_ids: subcategories
+        category_ids: categories,
+        subcategory_ids: subcategories
     })
     const token = localStorage.getItem("token") ?? '';
     const response = await fetch(`${ITEMS_API_URL}${queryString}`, {
