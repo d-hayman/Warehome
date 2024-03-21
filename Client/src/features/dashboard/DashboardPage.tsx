@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react"
 import { MdGridView, MdList } from "react-icons/md";
 import { fetchAllItems } from "../../shared/services/items.service";
 import { ItemModel } from "../../shared/models/item.model";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { SearchContext } from "../../components/providers/SearchProvider";
 import { Tooltip } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
@@ -36,6 +36,8 @@ function DashboardPage(){
     const [totalItems, setTotalItems] = useState(0);
 
     const {searchQuery, selectedCategories, selectedSubcategories} = useContext(SearchContext);
+
+    const navigate = useNavigate();
 
     /**
      * Calls the items fetch API
@@ -97,7 +99,7 @@ function DashboardPage(){
                         </Form.Select>
                     </Form.Group>
                     <Tooltip title="Create new item" style={{marginTop:"-5px", marginLeft:"1rem"}}>
-                        <Button variant="outline-secondary" href={`/item/new`}>
+                        <Button variant="outline-secondary" onClick={()=>{navigate(`/item/new`)}}>
                             <FaPlus/>
                         </Button>
                     </Tooltip>
@@ -110,7 +112,7 @@ function DashboardPage(){
                             value={modes.grid}
                             checked={itemDisplay === modes.grid}
                             variant="outline-primary"
-                            onChange={(e) => setItemDisplay(modes.grid)}
+                            onChange={(_) => setItemDisplay(modes.grid)}
                         >
                             <MdGridView/>
                         </ToggleButton>
@@ -120,7 +122,7 @@ function DashboardPage(){
                             value={modes.list}
                             checked={itemDisplay === modes.list}
                             variant="outline-primary"
-                            onChange={(e) => setItemDisplay(modes.list)}
+                            onChange={(_) => setItemDisplay(modes.list)}
                         >
                             <MdList/>
                         </ToggleButton>

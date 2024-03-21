@@ -5,7 +5,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Accordion, Button, Container, Navbar, Offcanvas } from "react-bootstrap";
 import { MdMenu } from "react-icons/md";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from '../assets/styles/LeftNav.module.css';
 import { ContainerModel } from "../shared/models/container.model";
 import { CategoryModel } from "../shared/models/categories/category.model";
@@ -13,9 +13,10 @@ import ContextAwareToggle from "../shared/components/ContextAwareToggle";
 import { fetchAllContainers } from "../shared/services/containers.service";
 import { fetchAllCategories, fetchAllSubcategories } from "../shared/services/categories.service";
 import { isAccordionKeyActive } from "../shared/utils/contextHelpers";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Tooltip } from "@mui/material";
 import { SubcategoryModel } from "../shared/models/categories/subcategory.model";
 import { SearchContext } from "./providers/SearchProvider";
+import { FaPlus } from "react-icons/fa";
 
 /**
  * LeftNav component for nested container accordions
@@ -26,6 +27,8 @@ function ContainerNav({containerData}:{containerData:ContainerModel}) {
   const [children, setChildren] = useState<ContainerModel[]>([]);
 
   const active = isAccordionKeyActive(containerData.id);
+
+  const navigate = useNavigate();
   
   /**
    * function to fetch child containers
@@ -56,6 +59,11 @@ function ContainerNav({containerData}:{containerData:ContainerModel}) {
       <div className={styles.leftnav_acc_header}>
         <Link to={`/container/${containerData.id}`}>{containerData.name}</Link>
         {containerData.children > 0 && <ContextAwareToggle eventKey={containerData.id} callback={fetchChildren}></ContextAwareToggle>}
+        <Tooltip title="Create new inner container" style={{marginLeft:containerData.children > 0 ? "unset" : "auto"}}>
+            <Button variant="outline-secondary" size="sm" onClick={()=>{navigate(`/container/${containerData.id}/new`)}}>
+                <FaPlus/>
+            </Button>
+        </Tooltip>
       </div>
       <Accordion.Collapse eventKey={containerData.id}>
 
@@ -183,6 +191,8 @@ function LeftNav() {
 
     let location = useLocation();
 
+    const navigate = useNavigate();
+
     useEffect(() => {
       /**
        * Function to fetch the top level containers
@@ -241,7 +251,15 @@ function LeftNav() {
         </Offcanvas.Header>
         <Offcanvas.Body className={styles.leftnav_body}>
           <div>
-            <Offcanvas.Title>Containers</Offcanvas.Title>
+            <Offcanvas.Title>
+              Containers
+              
+              <Tooltip title="Create new container" style={{marginTop:"-5px", marginLeft:"1rem"}}>
+                  <Button variant="outline-secondary" onClick={()=>{navigate(`/container/new`)}}>
+                      <FaPlus/>
+                  </Button>
+              </Tooltip>
+            </Offcanvas.Title>
             <Accordion alwaysOpen>
               {containers.map((container:ContainerModel) => (<ContainerNav key={container.id} containerData={container}/>))}
             </Accordion>

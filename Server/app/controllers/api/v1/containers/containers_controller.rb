@@ -74,7 +74,7 @@ module Api
         end
   
         def container_params
-          params.require(:container).permit(:description, :notes, :position, :parent_id, :image)
+          params.require(:container).permit(:name, :description, :notes, :parent_id, :image)
         end
 
         def containment_params

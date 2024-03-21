@@ -3,12 +3,12 @@
  */
 
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { ItemModel } from "../../shared/models/item.model";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { ContainerModel } from "../../shared/models/container.model";
 import { Alert, Button, ButtonGroup, Col, Container, Form, Row } from "react-bootstrap";
-import styles from "../../assets/styles/ItemPage.module.css";
+import styles from "../../assets/styles/ContainerPage.module.css";
 import noImage from '../../assets/img/imagenotfound.png';
-import { createItem, deleteItem, fetchItem, updateItem } from "../../shared/services/items.service";
+import { createContainer, deleteContainer, fetchContainer, updateContainer } from "../../shared/services/containers.service";
 import { listifyErrors } from "../../shared/utils/responseHelpers";
 import DeletionModal from "../../shared/components/DeletionModal";
 import { FaArrowLeft, FaBan, FaEdit, FaTrash } from "react-icons/fa";
@@ -20,13 +20,13 @@ enum modes {
 }
 
 /**
- * Item page component function
- * @returns JSX.Element for the item page component
+ * Container page component function
+ * @returns JSX.Element for the container page component
  */
-function ItemPage () {
-    const { id } = useParams();
-    const [item, setItem] = useState<ItemModel>(new ItemModel());
-    const [editItem, setEditItem] = useState(item);
+function ContainerPage () {
+    const { id, parentId } = useParams();
+    const [container, setContainer] = useState<ContainerModel>(new ContainerModel());
+    const [editContainer, setEditContainer] = useState(container);
     const [mode, setMode] = useState(modes.display);
 
     const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -35,36 +35,47 @@ function ItemPage () {
     const [successAlertBody, setSuccessAlertBody] = useState<any>({});
 
     const navigate = useNavigate();
+
+    let location = useLocation();
     
     /**
      * Calls the fetch API to populate the category data
      * @returns void
      */
-    const loadCurrentItem = async () => {
+    const loadCurrentContainer = async () => {
         // no need to fetch in create mode
-        if(id == "new"){
+        if(location.pathname.endsWith("/new")){
+            let empty = new ContainerModel();
+            setContainer(empty);
+            setEditContainer(empty);
             setMode(modes.edit);
+            // check for /containers/:parentId/new route
+            if(parentId){
+                setEditContainer({...empty, parentId: parentId??''});
+            }
             return;
         }
+
         try {
-            const json = await fetchItem(id);
-            setItem(ItemModel.buildItemData(json));
+            const json = await fetchContainer(id);
+            setContainer(ContainerModel.buildContainerData(json));
+            setMode(modes.display);
         } catch(e:any) {
             setErrorAlertBody({error: `${e}`});
             setShowErrorAlert(true);
-            console.error("Failed to fetch the item: ", e);
+            console.error("Failed to fetch the container: ", e);
         }
     };
 
     useEffect(() => {
-        loadCurrentItem();
-    }, [id]);
+        loadCurrentContainer();
+    }, [id, location.pathname]);
 
     /**
      * Edit button click event
      */
     const handleEdit = () => {
-        setEditItem(item); 
+        setEditContainer(container); 
         setMode(modes.edit)
     };
 
@@ -72,7 +83,7 @@ function ItemPage () {
      * Cancel button click event
      */
     const handleCancel = () => {
-        if (id == "new"){
+        if (location.pathname.endsWith("/new")){
             navigate('/dashboard');
         } else {
             setMode(modes.display);
@@ -80,26 +91,28 @@ function ItemPage () {
     };
 
     /**
-     * Handle submission of the item data
+     * Handle submission of the container data
      * @param e event
      */
     const handleSubmit = async (e:any) => {
         e.preventDefault();
 
         try {
-            const response = await (id=="new" ? createItem(editItem) : updateItem(id,editItem));
+            const response = await (location.pathname.endsWith("/new") 
+                ? createContainer(editContainer) 
+                : updateContainer(id,editContainer));
             if(response === undefined) {
                 setErrorAlertBody({error: "Malformed Data?"});
                 setShowErrorAlert(true);
             } else {
                 const json = await response.json();
                 if(response.ok) {
-                    if(id=="new"){
-                        navigate(`/item/${json.id}`);
-                        setSuccessAlertBody("Item Created!");
+                    if(location.pathname.endsWith("/new")){
+                        navigate(`/container/${json.id}`);
+                        setSuccessAlertBody("Container Created!");
                     } else {
-                        loadCurrentItem();
-                        setSuccessAlertBody("Item Updated!");
+                        loadCurrentContainer();
+                        setSuccessAlertBody("Container Updated!");
                     }
                     setMode(modes.display);
                     setShowSuccessAlert(true);
@@ -111,7 +124,7 @@ function ItemPage () {
         } catch (e) {
             setErrorAlertBody({error: `${e}`});
             setShowErrorAlert(true);
-            console.error("Failed to create item: ", e);
+            console.error("Failed to create container: ", e);
         }
     };
 
@@ -120,8 +133,8 @@ function ItemPage () {
         const fileInput = (document.getElementById("image") as HTMLInputElement);
         if(e.clipboardData !== null && e.clipboardData.files.length > 0){
             fileInput.files = e.clipboardData.files;
-            setEditItem({
-                ...editItem,
+            setEditContainer({
+                ...editContainer,
                 image: (e.target as HTMLInputElement).files?.[0]
             });
         }
@@ -139,10 +152,10 @@ function ItemPage () {
                 <Alert.Heading>Great Success!</Alert.Heading>
                 {successAlertBody}
             </Alert>}
-            <Row className={styles.item_details}>
+            <Row className={styles.container_details}>
                 <Col md={12} lg={4}>
-                    <Link to={item.image_url ? item.image_url : noImage} target="_blank" rel="noopener noreferrer">
-                        <img src={item.image_url ? item.image_url : noImage} className={styles.item_image}/>
+                    <Link to={container.image_url ? container.image_url : noImage} target="_blank" rel="noopener noreferrer">
+                        <img src={container.image_url ? container.image_url : noImage} className={styles.container_image}/>
                     </Link>
                     {mode === modes.edit && <>
                     <Form.Group className="mb-3" controlId="image">
@@ -151,8 +164,8 @@ function ItemPage () {
                             type="file"
                             accept="image/*"
                             onChange={(e) => {
-                                setEditItem({
-                                    ...editItem,
+                                setEditContainer({
+                                    ...editContainer,
                                     image: (e.target as HTMLInputElement).files?.[0]
                                 });
                                 console.log((e.target as HTMLInputElement).files?.[0]);
@@ -161,8 +174,8 @@ function ItemPage () {
                     </Form.Group>
                     </>}
                 </Col>
-                <Col md={12} lg={8} className={styles.item_attributes}>
-                    <div className={styles.item_controls}>
+                <Col md={12} lg={8} className={styles.container_attributes}>
+                    <div className={styles.container_controls}>
                         <ButtonGroup>
                             {id != "new" &&
                             <Tooltip title="Back to Dashboard">
@@ -170,7 +183,7 @@ function ItemPage () {
                             </Tooltip>
                             }
                             {mode === modes.display && 
-                            <Tooltip title="Edit Item">
+                            <Tooltip title="Edit Container">
                                 <Button variant="outline-secondary" onClick={handleEdit}><FaEdit/></Button>
                             </Tooltip>
                             }
@@ -181,28 +194,41 @@ function ItemPage () {
                             }
                             {id != "new" && 
                             <DeletionModal 
-                                deletion={deleteItem} 
-                                title={item.description} 
-                                id={item.id} 
+                                deletion={deleteContainer} 
+                                title={container.name} 
+                                id={container.id} 
                                 buttonBody={<FaTrash/>} 
                                 callback={()=>{navigate('/dashboard')}} 
-                            /> 
+                            />
                             }
                         </ButtonGroup>
                     </div>
                     {mode === modes.display && <>
-                    <b>Description:</b> {item.description}<br/>
-                    <b>Notes:</b> {item.notes}
+                    <b>Name:</b> {container.name}<br/>
+                    <b>Description:</b> {container.description}<br/>
+                    <b>Notes:</b> {container.notes}
                     </>}
                     {mode === modes.edit && <>
                     <Form className={styles.form_outer} onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3" controlId="nameInput">
+                            <Form.Label>Name:</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                value={editContainer.name} 
+                                onChange={(e) => setEditContainer({
+                                    ...editContainer, 
+                                    name:e.target.value
+                                })} 
+                                required 
+                            />
+                        </Form.Group>
                         <Form.Group className="mb-3" controlId="descriptionInput">
                             <Form.Label>Description:</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                value={editItem.description} 
-                                onChange={(e) => setEditItem({
-                                    ...editItem, 
+                                value={editContainer.description} 
+                                onChange={(e) => setEditContainer({
+                                    ...editContainer, 
                                     description:e.target.value
                                 })} 
                                 required 
@@ -213,9 +239,9 @@ function ItemPage () {
                             <Form.Control 
                                 as="textarea"
                                 rows={1} 
-                                value={editItem.notes} 
-                                onChange={(e) => setEditItem({
-                                    ...editItem, 
+                                value={editContainer.notes} 
+                                onChange={(e) => setEditContainer({
+                                    ...editContainer, 
                                     notes:e.target.value
                                 })} 
                             />
@@ -232,4 +258,4 @@ function ItemPage () {
     )
 }
 
-export default ItemPage
+export default ContainerPage

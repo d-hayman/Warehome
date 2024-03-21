@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import PropTypes, {InferProps} from "prop-types";
+import { Tooltip } from '@mui/material';
 
 /**
  * @param title: name of the thing to be deleted
@@ -82,7 +83,9 @@ function DeletionModal({ title, parent, id, deletion, callback, buttonBody="Dele
 
     return (
         <>
-            <Button variant="outline-danger" size={buttonSize == 'sm' ? 'sm' : buttonSize == 'lg' ? 'lg' : undefined} onClick={handleShow}>{buttonBody}</Button>
+            <Tooltip title={`Delete ${title}`}>
+                <Button variant="outline-danger" size={buttonSize == 'sm' ? 'sm' : buttonSize == 'lg' ? 'lg' : undefined} onClick={handleShow}>{buttonBody}</Button>
+            </Tooltip>
 
             <Modal
                 show={visible}

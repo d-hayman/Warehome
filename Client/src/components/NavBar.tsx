@@ -45,7 +45,7 @@ function NavBar() {
     <div className='app'>
         <Navbar bg="primary" data-bs-theme="dark">
             <Container>
-                <Navbar.Brand href="/dashboard">Warehome</Navbar.Brand>
+                <Navbar.Brand onClick={()=>{navigate("/dashboard")}}>Warehome</Navbar.Brand>
                 <Tooltip title="Sauce">
                     <Link 
                         to="https://github.com/d-hayman/Warehome"

@@ -10,6 +10,10 @@ class ContainerModel {
      */
     id:string = '';
     /**
+     * ID of the parent container
+     */
+    parentId: string = '';
+    /**
      * container name
      */
     name:string = '';
@@ -25,6 +29,15 @@ class ContainerModel {
      * Number of containers directly within this container
      */
     children:number = 0;
+    /**
+     * item image url from response data
+     */
+    image_url:string = '';
+
+    /**
+     * Selected file populated in the form data when saving the item
+     */
+    image:File | undefined | null = null;
 
     /**
      * Parse response data to create a container model object
@@ -34,9 +47,11 @@ class ContainerModel {
     public static buildContainerData(dataset:any):ContainerModel {
         const container = new ContainerModel();
         container.id = dataset.id ?? '';
+        container.parentId = dataset.parent_id ?? '';
         container.name = dataset.name ?? '';
         container.description = dataset.description ?? '';
         container.notes = dataset.notes ?? '';
+        container.image_url = dataset.image_url ?? '';
         container.children = dataset.children ?? 0;
         return container;
     }

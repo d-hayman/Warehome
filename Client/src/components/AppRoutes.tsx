@@ -17,6 +17,7 @@ import AdminRoles from '../features/admin/AdminRoles';
 import AdminRolesEdit from '../features/admin/AdminRolesEdit';
 import ValidateRoute from './ValidateRoute';
 import ItemPage from '../features/dashboard/ItemPage';
+import ContainerPage from '../features/dashboard/ContainerPage';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -33,6 +34,8 @@ function AppRoutes() {
                 <Route element={<LeftNav/>}>
                     <Route path="/dashboard" element={<DashboardPage/>}/>
                     <Route path="/item/:id" element={<ItemPage/>}/>
+                    <Route path="/container/:id" element={<ContainerPage/>}/>
+                    <Route path="/container/:parentId/new" element={<ContainerPage/>}/>
                 </Route>
 
                 <Route element={<PermissionCheck permission='AdminPanel:view'/>}>
