@@ -30,7 +30,8 @@ Rails.application.routes.draw do
 
       scope module: 'containers' do
         resources :containers, only: [:index, :show, :create, :update, :destroy] do
-          match "items/:id", to: "containers#add_item", via: [:put]
+          match "items/:id", to: "containers#add_item", via: [:post]
+          match "items/:id", to: "containers#update_item", via: [:put]
           match "items/:id", to: "containers#remove_item", via: [:delete]
           post "items/:item_id/checkout", to: "checkouts#create"
           delete "items/:item_id/checkout/:id", to: "checkouts#destroy"
@@ -39,6 +40,7 @@ Rails.application.routes.draw do
 
       scope module: 'items' do
         resources :items, only: [:index, :show, :create, :update, :destroy] do
+          match "containers", to: "items#fetch_containers", via: [:get]
           match "subcategories/:id", to: "items#add_subcategory", via: [:put]
           match "subcategories/:id", to: "items#remove_subcategory", via: [:delete]
         end

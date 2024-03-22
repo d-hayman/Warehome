@@ -2,8 +2,9 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { CONTAINERS_API_URL } from "../../constants";
+import { CONTAINERS_API_URL, CONTAINER_ITEMS_API_URL } from "../../constants";
 import { ContainerModel } from "../models/container.model";
+import { ContainmentModel } from "../models/containment.model";
 import { objectToFormData } from "../utils/formDataHelper";
 import { hasJson } from "../utils/responseHelpers";
 
@@ -157,4 +158,48 @@ async function deleteContainer(id:string|undefined) {
     throw new Error(response.statusText);
 }
 
-export {fetchAllContainers, fetchContainer, createContainer, updateContainer, deleteContainer}
+/**
+ * Calls the API to add an item to a container
+ * @param containerId 
+ * @param id 
+ * @param containment 
+ * @returns 
+ */
+async function containerAddItem(containerId:string|undefined, id:string|undefined, containment:ContainmentModel) {
+    if(!containerId) {
+        console.error("Tried to add item with no container id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to add item with no id?");
+        return;
+    }
+
+    if(!containment) {
+        console.error("Tried to add item with no data?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${CONTAINER_ITEMS_API_URL}/${id}`.replace(':containerId', containerId), {
+        method: "POST",
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            containment: {
+                quantity: containment.quantity,
+                position: containment.position
+        }}),
+    });
+
+    if (!response.ok && !hasJson(response)) {
+        throw new Error(response.statusText);
+    }
+
+    return response;
+}
+
+export {fetchAllContainers, fetchContainer, createContainer, updateContainer, deleteContainer, containerAddItem}

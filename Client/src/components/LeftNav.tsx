@@ -7,6 +7,7 @@ import { Accordion, Button, Container, Navbar, Offcanvas } from "react-bootstrap
 import { MdMenu } from "react-icons/md";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styles from '../assets/styles/LeftNav.module.css';
+import noImage from '../assets/img/imagenotfound.png';
 import { ContainerModel } from "../shared/models/container.model";
 import { CategoryModel } from "../shared/models/categories/category.model";
 import ContextAwareToggle from "../shared/components/ContextAwareToggle";
@@ -57,7 +58,10 @@ function ContainerNav({containerData}:{containerData:ContainerModel}) {
   return (
     <div className={styles.leftnav_acc_item}>
       <div className={styles.leftnav_acc_header}>
-        <Link to={`/container/${containerData.id}`}>{containerData.name}</Link>
+        <Link to={`/container/${containerData.id}`}>
+          <img src={containerData.image_url ? containerData.image_url : noImage} className={styles.container_image}/>
+          {containerData.name}
+        </Link>
         {containerData.children > 0 && <ContextAwareToggle eventKey={containerData.id} callback={fetchChildren}></ContextAwareToggle>}
         <Tooltip title="Create new inner container" style={{marginLeft:containerData.children > 0 ? "unset" : "auto"}}>
             <Button variant="outline-secondary" size="sm" onClick={()=>{navigate(`/container/${containerData.id}/new`)}}>

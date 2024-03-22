@@ -13,6 +13,7 @@ import { listifyErrors } from "../../shared/utils/responseHelpers";
 import DeletionModal from "../../shared/components/DeletionModal";
 import { FaArrowLeft, FaBan, FaEdit, FaTrash } from "react-icons/fa";
 import { Tooltip } from "@mui/material";
+import AddToContainerModal from "./components/AddToContainerModal";
 
 enum modes { 
     display,
@@ -225,6 +226,17 @@ function ItemPage () {
                         </Button>
                     </Form>
                     </>}
+                </Col>
+            </Row>
+
+            <Row className={styles.item_containers}>
+                <h3>Containers</h3>
+                <Col xs={12}>
+                    <div className={styles.item_controls}>
+                        <ButtonGroup>
+                            <AddToContainerModal callback={()=>{}} itemId={id??'0'}/>
+                        </ButtonGroup>
+                    </div>
                 </Col>
             </Row>
 

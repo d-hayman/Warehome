@@ -1,0 +1,26 @@
+.leftnav_body {
+    overflow-y: auto;
+    max-height: 300px;
+    scrollbar-width: thin;
+}
+
+.leftnav_acc_item {
+    padding-left: .75rem;
+}
+
+.leftnav_acc_header {
+    display: flex;
+    align-items: center;
+    height: 2.9rem;
+}
+
+.leftnav_acc_header > a {
+    text-decoration: none;
+    color: black;
+}
+
+.container_image {
+    margin-right: 5px;
+    max-height: 40px; 
+    max-width: 40px;
+}

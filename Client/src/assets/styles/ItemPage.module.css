@@ -47,3 +47,10 @@
 .submit_button {
     margin-top: 1.5rem;
 }
+
+/*container section*/
+
+.item_containers {
+    margin: unset !important;
+    margin-top: 1rem !important;
+}

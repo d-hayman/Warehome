@@ -2,8 +2,8 @@ module Api
     module V1
       class Containers::ContainersController < AuthenticatedController
         before_action -> {check_permissions( :Container, params[:action])}, only: [:index, :show, :create, :update, :destroy, :add_item, :remove_item] 
-        before_action :set_container, only: %i[show update destroy add_item remove_item]
-        before_action :set_item, only: %i[add_item remove_item]
+        before_action :set_container, only: %i[show update destroy add_item update_item remove_item]
+        before_action :set_item, only: %i[add_item update_item remove_item]
   
         def index
           @containers = params.has_key?(:parent) ? Container.children_of(params[:parent]) : Container.top_level
@@ -54,6 +54,15 @@ module Api
           end
         end
 
+        def update_item
+          containment = @container.containments.findby(item_id: @item.id)
+          if containment.update(containment_params)
+            render json: containment
+          else
+            render json: containment.errors, status: :unprocessable_entity
+          end
+        end
+
         def remove_item
           @container.items.destroy @item
         end
@@ -61,7 +70,7 @@ module Api
         private
   
         def set_container
-          if ["add_item","remove_item"].include? params[:action]
+          if ["add_item","remove_item","update_item"].include? params[:action]
             @container = Container.find(params[:container_id])
           else
             @container = Container.find(params[:id])

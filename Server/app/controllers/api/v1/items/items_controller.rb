@@ -2,7 +2,7 @@ module Api
     module V1
       class Items::ItemsController < AuthenticatedController
         before_action -> {check_permissions( :Item, params[:action])}, only: [:index, :show, :create, :update, :destroy, :add_subcategory, :remove_subcategory] 
-        before_action :set_item, only: %i[show update destroy add_subcategory remove_subcategory]
+        before_action :set_item, only: %i[show update destroy fetch_containers add_subcategory remove_subcategory]
         before_action :set_subcategory, only: %i[add_subcategory remove_subcategory]
   
         def index
@@ -57,6 +57,10 @@ module Api
           
         def destroy
           @item.destroy
+        end
+
+        def fetch_containers
+          render json: @item.containments.map{|containment| containment.as_json.merge(container: augment_with_image(containment.container))}
         end
 
         def add_subcategory

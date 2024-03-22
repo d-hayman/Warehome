@@ -47,3 +47,9 @@
 .leftNav_subcategories {
     padding-left: .75rem;
 }
+
+.container_image {
+    margin-right: 5px;
+    max-height: 40px; 
+    max-width: 40px;
+}
