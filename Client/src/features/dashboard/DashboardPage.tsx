@@ -88,7 +88,7 @@ function DashboardPage(){
     return (
         <Container className={styles.dashboard_outer}>
             <Row className="align-items-center">
-                <Col md={10} xs={12} className={styles.dashboard_display_toggle}>
+                <Col xs={12} className={styles.dashboard_controls}>
                     <Form.Group controlId="formGridState" style={{display:"inline-block"}}>
                         <Form.Select defaultValue="Created">
                             <option>Created</option>
@@ -100,9 +100,9 @@ function DashboardPage(){
                             <FaPlus/>
                         </Button>
                     </Tooltip>
-                </Col>
-                <Col md={2} className={`d-none d-md-block ${styles.dashboard_display_toggle}`}>
-                    {displayToggle}
+                    <span className={`d-none d-md-inline-block`} style={{marginLeft:"1rem"}}>
+                        {displayToggle}
+                    </span>
                 </Col>
                 <Col xs={12} className={styles.dashboard_pagination}>
                     <Paginator

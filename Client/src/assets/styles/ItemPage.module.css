@@ -55,6 +55,10 @@
     margin-top: 1rem !important;
 }
 
+.dashboard_display_toggle {
+    margin-left: 1rem;
+}
+
 .container_card {
     margin-top: 2rem !important;
 }

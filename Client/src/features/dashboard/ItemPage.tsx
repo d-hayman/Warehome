@@ -261,10 +261,10 @@ function ItemPage () {
                 <h3>Containers</h3>
                 <Col xs={12}>
                     <div className={styles.item_controls}>
-                        <ButtonGroup style={{marginRight:'2rem'}}>
+                        <ButtonGroup>
                             <AddToContainerModal callback={loadContainers} itemId={id??'0'}/>
                         </ButtonGroup>
-                        {displayToggle}
+                        <span className={`d-none d-md-inline-block ${styles.dashboard_display_toggle}`}>{displayToggle}</span>
                     </div>
                 </Col>
             </Row>
@@ -278,8 +278,9 @@ function ItemPage () {
                                     <img src={(container.container?.image_url) ? container.container.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
                                 </Col>
                                 <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
-                                    <b>{container.container?.name}</b><br/>
-                                    {container.container?.description}
+                                    <b>{container.container?.name}</b><hr/>
+                                    Quantity: {container.quantity}<br/>
+                                    Position: {container.position}
                                 </Col>
                             </Row>
                             </Link>

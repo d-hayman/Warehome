@@ -43,6 +43,8 @@ class ContainmentModel {
         const cont = new ContainmentModel();
         cont.itemId = dataset.item_id ?? '';
         cont.containerId = dataset.container_id ?? '';
+        cont.quantity = dataset.quantity ?? 0;
+        cont.position = dataset.position ?? '';
 
         if(dataset.item !== undefined && typeof dataset.item === 'object'){
             cont.item = ItemModel.buildItemData(dataset.item);
