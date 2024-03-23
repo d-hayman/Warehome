@@ -202,4 +202,44 @@ async function containerAddItem(containerId:string|undefined, id:string|undefine
     return response;
 }
 
-export {fetchAllContainers, fetchContainer, createContainer, updateContainer, deleteContainer, containerAddItem}
+/**
+ * Calls the API to remove an item from a container
+ * @param containerId 
+ * @param id 
+ * @returns 
+ */
+async function containerRemoveItem(containerId:string|undefined, id:string|undefined) {
+    if(!containerId) {
+        console.error("Tried to add item with no container id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to add item with no id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${CONTAINER_ITEMS_API_URL}/${id}`.replace(':containerId', containerId), {
+        method: "DELETE",
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(response.status === 204) {
+        return null;
+    }
+
+    throw new Error(response.statusText);
+}
+
+export {
+    fetchAllContainers, 
+    fetchContainer, 
+    createContainer, 
+    updateContainer, 
+    deleteContainer, 
+    
+    containerAddItem, 
+    containerRemoveItem}

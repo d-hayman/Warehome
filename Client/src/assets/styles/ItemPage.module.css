@@ -76,3 +76,9 @@
     display: inline-flex;
     justify-content: center;
 }
+
+.container_card_controls {
+    border-top: solid 1px;
+    margin-top: .5rem !important;
+    padding-top: .5rem !important;
+}

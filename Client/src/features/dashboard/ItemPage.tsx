@@ -16,6 +16,7 @@ import { Tooltip } from "@mui/material";
 import AddToContainerModal from "./components/AddToContainerModal";
 import { ContainmentModel } from "../../shared/models/containment.model";
 import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
+import { containerRemoveItem } from "../../shared/services/containers.service";
 
 enum modes { 
     display,
@@ -271,7 +272,7 @@ function ItemPage () {
                 {containers.map((container:ContainmentModel) => (
                     <Col key={container.containerId} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.container_card}>
                         <Container className={styles.container_card_inner}>
-                        <Link to={`/container/${container.containerId}`}>
+                            <Link to={`/container/${container.containerId}`}>
                             <Row>
                                 <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.container_image}>
                                     <img src={(container.container?.image_url) ? container.container.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
@@ -281,7 +282,22 @@ function ItemPage () {
                                     {container.container?.description}
                                 </Col>
                             </Row>
-                        </Link>
+                            </Link>
+                            <Row className={styles.container_card_controls}>
+                                <Col xs={12} style={{textAlign:'right'}}>
+                                    <ButtonGroup>
+                                        <DeletionModal
+                                            deletion={containerRemoveItem}
+                                            id={item.id}
+                                            title={`${item.description} from ${container.container?.name}`}
+                                            parent={container.containerId}
+                                            buttonSize='sm'
+                                            buttonBody={<FaTrash/>}
+                                            callback={loadContainers}
+                                        />
+                                    </ButtonGroup>
+                                </Col>
+                            </Row>
                         </Container>
                     </Col>
                 ))}
