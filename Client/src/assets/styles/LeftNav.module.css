@@ -40,6 +40,14 @@
     color: black;
 }
 
+.leftnav_acc_header .add_button {
+    visibility: hidden;
+}
+
+.leftnav_acc_header:hover .add_button {
+    visibility: visible;
+}
+
 .leftnav_category {
     padding-top: 4px;
 }

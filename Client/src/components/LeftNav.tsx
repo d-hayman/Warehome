@@ -62,12 +62,14 @@ function ContainerNav({containerData}:{containerData:ContainerModel}) {
           <img src={containerData.image_url ? containerData.image_url : noImage} className={styles.container_image}/>
           {containerData.name}
         </Link>
-        {containerData.children > 0 && <ContextAwareToggle eventKey={containerData.id} callback={fetchChildren}></ContextAwareToggle>}
-        <Tooltip title="Create new inner container" style={{marginLeft:containerData.children > 0 ? "unset" : "auto"}}>
-            <Button variant="outline-secondary" size="sm" onClick={()=>{navigate(`/container/${containerData.id}/new`)}}>
+        <Tooltip title="Create new inner container" placement="left" style={{marginLeft:"auto"}}>
+            <Button variant="outline-secondary" className={styles.add_button} size="sm" onClick={()=>{navigate(`/container/${containerData.id}/new`)}}>
                 <FaPlus/>
             </Button>
         </Tooltip>
+        <span style={{visibility:containerData.children > 0 ? 'visible' : 'hidden'}}>
+          <ContextAwareToggle eventKey={containerData.id} callback={fetchChildren}/>
+        </span>
       </div>
       <Accordion.Collapse eventKey={containerData.id}>
 
