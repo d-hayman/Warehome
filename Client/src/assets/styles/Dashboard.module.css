@@ -5,13 +5,13 @@
     margin-left: unset !important;
     margin-right: unset !important;
     padding-bottom: 2rem;
-    height: calc(100vh - (2rem + 56px));
+    height: calc(100vh - (56px));
     overflow: auto;
 }
 
 @media (max-width:991px) {
     .dashboard_outer{
-        height: calc(100vh - (2rem + 110px));
+        height: calc(100vh - (110px));
     }
 }
 

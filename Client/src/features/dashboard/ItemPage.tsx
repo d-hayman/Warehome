@@ -8,12 +8,14 @@ import { ItemModel } from "../../shared/models/item.model";
 import { Alert, Button, ButtonGroup, Col, Container, Form, Row } from "react-bootstrap";
 import styles from "../../assets/styles/ItemPage.module.css";
 import noImage from '../../assets/img/imagenotfound.png';
-import { createItem, deleteItem, fetchItem, updateItem } from "../../shared/services/items.service";
+import { createItem, deleteItem, fetchAllItemContainers, fetchItem, updateItem } from "../../shared/services/items.service";
 import { listifyErrors } from "../../shared/utils/responseHelpers";
 import DeletionModal from "../../shared/components/DeletionModal";
 import { FaArrowLeft, FaBan, FaEdit, FaTrash } from "react-icons/fa";
 import { Tooltip } from "@mui/material";
 import AddToContainerModal from "./components/AddToContainerModal";
+import { ContainmentModel } from "../../shared/models/containment.model";
+import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
 
 enum modes { 
     display,
@@ -29,6 +31,9 @@ function ItemPage () {
     const [item, setItem] = useState<ItemModel>(new ItemModel());
     const [editItem, setEditItem] = useState(item);
     const [mode, setMode] = useState(modes.display);
+
+    const {displayMode, displayToggle} = useDisplayModeToggle();
+    const [containers, setContainers] = useState<ContainmentModel[]>([]);
 
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [errorAlertBody, setErrorAlertBody] = useState<any>({});
@@ -57,8 +62,30 @@ function ItemPage () {
         }
     };
 
+    const loadContainers = async () => {
+        // no need to fetch in create mode
+        if(id == "new"){
+            return;
+        }
+        try {
+            const json = await fetchAllItemContainers(id);
+            const containers:ContainmentModel[] = [];
+            if(json.containers){
+                for (const cont of json.containers){
+                    containers.push(ContainmentModel.buildContainmentData(cont));
+                }
+            }
+            setContainers(containers);
+        } catch(e:any) {
+            setErrorAlertBody({error: `${e}`});
+            setShowErrorAlert(true);
+            console.error("Failed to fetch the containers: ", e);
+        }
+    }
+
     useEffect(() => {
         loadCurrentItem();
+        loadContainers();
     }, [id]);
 
     /**
@@ -233,11 +260,31 @@ function ItemPage () {
                 <h3>Containers</h3>
                 <Col xs={12}>
                     <div className={styles.item_controls}>
-                        <ButtonGroup>
-                            <AddToContainerModal callback={()=>{}} itemId={id??'0'}/>
+                        <ButtonGroup style={{marginRight:'2rem'}}>
+                            <AddToContainerModal callback={loadContainers} itemId={id??'0'}/>
                         </ButtonGroup>
+                        {displayToggle}
                     </div>
                 </Col>
+            </Row>
+            <Row>
+                {containers.map((container:ContainmentModel) => (
+                    <Col key={container.containerId} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.container_card}>
+                        <Container className={styles.container_card_inner}>
+                        <Link to={`/container/${container.containerId}`}>
+                            <Row>
+                                <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.container_image}>
+                                    <img src={(container.container?.image_url) ? container.container.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
+                                </Col>
+                                <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
+                                    <b>{container.container?.name}</b><br/>
+                                    {container.container?.description}
+                                </Col>
+                            </Row>
+                        </Link>
+                        </Container>
+                    </Col>
+                ))}
             </Row>
 
         </Container>

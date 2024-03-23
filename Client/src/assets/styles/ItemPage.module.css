@@ -54,3 +54,25 @@
     margin: unset !important;
     margin-top: 1rem !important;
 }
+
+.container_card {
+    margin-top: 2rem !important;
+}
+
+.container_card > .container_card_inner {
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 1rem !important;
+}
+
+.container_card > .container_card_inner > a {
+    color: black;
+    text-decoration: unset;
+}
+
+.container_image {
+    height: 200px;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+}

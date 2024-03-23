@@ -63,6 +63,11 @@ export const ITEMS_API_URL =
         ? "http://mocked-api-url"
         : import.meta.env.VITE_ITEMS_API_URL;
 
+export const ITEM_CONTAINERS_API_URL = 
+    process.env.NODE_ENV === "test"
+        ? "http://mocked-api-url"
+        : import.meta.env.VITE_ITEM_CONTAINERS_API_URL;
+
 export const VALIDATE_INTERVAL = 
     process.env.NODE_ENV === "test"
         ? 20

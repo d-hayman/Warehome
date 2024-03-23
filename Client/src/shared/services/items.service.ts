@@ -2,7 +2,7 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { ITEMS_API_URL } from "../../constants";
+import { ITEMS_API_URL, ITEM_CONTAINERS_API_URL } from "../../constants";
 import { ItemModel } from "../models/item.model";
 import { objectToFormData } from "../utils/formDataHelper";
 import { objectToQueryString } from "../utils/queryStringHelper";
@@ -160,4 +160,29 @@ async function deleteItem(id:string|undefined) {
     throw new Error(response.statusText);
 }
 
-export {fetchAllItems, fetchItem, createItem, updateItem, deleteItem};
+/**
+ * Calls the API to add an item to a container
+ * @param itemId 
+ * @returns 
+ */
+async function fetchAllItemContainers(itemId:string|undefined) {
+    if(!itemId) {
+        console.error("Tried to fetch containers with no item id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${ITEM_CONTAINERS_API_URL}`.replace(':itemId', itemId), {
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(!response.ok){
+        throw new Error(response.statusText);
+    }
+
+    return response.json();
+}
+
+export {fetchAllItems, fetchItem, createItem, updateItem, deleteItem, fetchAllItemContainers};

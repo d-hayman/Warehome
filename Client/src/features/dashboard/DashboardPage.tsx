@@ -2,31 +2,28 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { Button, ButtonGroup, Col, Container, Form, Row, ToggleButton } from "react-bootstrap"
+import { Button, Col, Container, Form, Row } from "react-bootstrap"
 import Paginator from "../../shared/components/Pagination"
 import styles from "../../assets/styles/Dashboard.module.css"
 import noImage from '../../assets/img/imagenotfound.png';
-import { useContext, useEffect, useState } from "react"
-import { MdGridView, MdList } from "react-icons/md";
+import { useContext, useEffect, useState } from "react";
 import { fetchAllItems } from "../../shared/services/items.service";
 import { ItemModel } from "../../shared/models/item.model";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { SearchContext } from "../../components/providers/SearchProvider";
 import { Tooltip } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
+import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
 
-enum modes {
-    grid,
-    list
-}
 
 /**
  * Dashboard Page
  * @returns JSX.Element for the dashboard
  */
 function DashboardPage(){
-    const [itemDisplay, setItemDisplay] = useState(modes.grid);
     const [items, setItems] = useState<ItemModel[]>([]);
+
+    const {displayMode, displayToggle} = useDisplayModeToggle();
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -105,28 +102,7 @@ function DashboardPage(){
                     </Tooltip>
                 </Col>
                 <Col md={2} className={`d-none d-md-block ${styles.dashboard_display_toggle}`}>
-                    <ButtonGroup>
-                        <ToggleButton
-                            id="item-grid"
-                            type="radio"
-                            value={modes.grid}
-                            checked={itemDisplay === modes.grid}
-                            variant="outline-primary"
-                            onChange={(_) => setItemDisplay(modes.grid)}
-                        >
-                            <MdGridView/>
-                        </ToggleButton>
-                        <ToggleButton
-                            id="item-list"
-                            type="radio"
-                            value={modes.list}
-                            checked={itemDisplay === modes.list}
-                            variant="outline-primary"
-                            onChange={(_) => setItemDisplay(modes.list)}
-                        >
-                            <MdList/>
-                        </ToggleButton>
-                    </ButtonGroup>
+                    {displayToggle}
                 </Col>
                 <Col xs={12} className={styles.dashboard_pagination}>
                     <Paginator
@@ -139,14 +115,14 @@ function DashboardPage(){
             </Row>
             <Row>
                 {items.map((item:ItemModel) => (
-                    <Col key={item.id} xs={12} md={itemDisplay == modes.grid ? 4 : 12} className={styles.item_card}>
+                    <Col key={item.id} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.item_card}>
                         <Container className={styles.item_card_inner}>
                         <Link to={`/item/${item.id}`}>
                             <Row>
-                                <Col xs={4} md={itemDisplay == modes.grid ? 12 : 4} className={styles.item_image}>
+                                <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.item_image}>
                                     <img src={item.image_url ? item.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
                                 </Col>
-                                <Col xs={8} md={itemDisplay == modes.grid ? 12 : 8}>
+                                <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
                                     <b>{item.description}</b><br/>
                                     {item.notes}
                                 </Col>

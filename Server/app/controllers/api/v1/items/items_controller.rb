@@ -60,7 +60,9 @@ module Api
         end
 
         def fetch_containers
-          render json: @item.containments.map{|containment| containment.as_json.merge(container: augment_with_image(containment.container))}
+          render json: {
+            containers: @item.containments.map{|containment| containment.as_json.merge(container: augment_with_image(containment.container))}
+          }
         end
 
         def add_subcategory
@@ -74,7 +76,7 @@ module Api
         private
   
         def set_item
-          if ["add_subcategory","remove_subcategory"].include? params[:action]
+          if ["add_subcategory","remove_subcategory","fetch_containers"].include? params[:action]
             @item = Item.find(params[:item_id])
           else
             @item = Item.find(params[:id])
