@@ -161,7 +161,7 @@ async function deleteItem(id:string|undefined) {
 }
 
 /**
- * Calls the API to add an item to a container
+ * Calls the API to fetch item containers
  * @param itemId 
  * @returns 
  */
@@ -185,4 +185,35 @@ async function fetchAllItemContainers(itemId:string|undefined) {
     return response.json();
 }
 
-export {fetchAllItems, fetchItem, createItem, updateItem, deleteItem, fetchAllItemContainers};
+/**
+ * Calls the API to fetch an item container
+ * @param itemId 
+ * @param containerId
+ * @returns 
+ */
+async function fetchItemContainer(itemId:string|undefined,containerId:string|undefined) {
+    if(!itemId) {
+        console.error("Tried to fetch container with no item id?");
+        return;
+    }
+
+    if(!containerId) {
+        console.error("Tried to fetch container with no container id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${ITEM_CONTAINERS_API_URL}/${containerId}`.replace(':itemId', itemId), {
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(!response.ok){
+        throw new Error(response.statusText);
+    }
+
+    return response.json();
+}
+
+export {fetchAllItems, fetchItem, createItem, updateItem, deleteItem, fetchAllItemContainers, fetchItemContainer};

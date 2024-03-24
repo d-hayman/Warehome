@@ -203,6 +203,50 @@ async function containerAddItem(containerId:string|undefined, id:string|undefine
 }
 
 /**
+ * Calls the API to add an item to a container
+ * @param containerId 
+ * @param id 
+ * @param containment 
+ * @returns 
+ */
+async function containerUpdateItem(containerId:string|undefined, id:string|undefined, containment:ContainmentModel) {
+    if(!containerId) {
+        console.error("Tried to add item with no container id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to add item with no id?");
+        return;
+    }
+
+    if(!containment) {
+        console.error("Tried to add item with no data?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${CONTAINER_ITEMS_API_URL}/${id}`.replace(':containerId', containerId), {
+        method: "PUT",
+        headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            containment: {
+                quantity: containment.quantity,
+                position: containment.position
+        }}),
+    });
+
+    if (!response.ok && !hasJson(response)) {
+        throw new Error(response.statusText);
+    }
+
+    return response;
+}
+
+/**
  * Calls the API to remove an item from a container
  * @param containerId 
  * @param id 
@@ -242,4 +286,5 @@ export {
     deleteContainer, 
     
     containerAddItem, 
+    containerUpdateItem,
     containerRemoveItem}

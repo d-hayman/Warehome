@@ -1,8 +1,8 @@
 /**
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
-import { FaPlus } from 'react-icons/fa';
-import { containerAddItem, fetchAllContainers } from '../../../shared/services/containers.service';
+import { FaEdit, FaPlus } from 'react-icons/fa';
+import { containerAddItem, containerUpdateItem, fetchAllContainers } from '../../../shared/services/containers.service';
 import { Accordion, Alert, Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { useState } from 'react';
 import { listifyErrors } from '../../../shared/utils/responseHelpers';
@@ -12,6 +12,7 @@ import { isAccordionKeyActive } from '../../../shared/utils/contextHelpers';
 import ContextAwareToggle from '../../../shared/components/ContextAwareToggle';
 import styles from '../../../assets/styles/AddItem.module.css';
 import noImage from '../../../assets/img/imagenotfound.png';
+import { fetchItemContainer } from '../../../shared/services/items.service';
 
 /**
  * LeftNav component for nested container accordions
@@ -79,7 +80,7 @@ function ContainerNav({containerData, selectedContainer, setSelectedContainer}
  * @param param0 
  * @returns 
  */
-function AddToContainerModal({callback, itemId}: {callback: Function, itemId:string}) {
+function AddToContainerModal({callback, itemId, containerId}: {callback: Function, itemId:string, containerId?:string}) {
     const [containment, setContainment] = useState(new ContainmentModel());
     
     const [containers, setContainers] = useState<ContainerModel[]>([]);
@@ -93,7 +94,7 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
     /**
      * Function to fetch the top level containers
      */
-    const fetchContainers = async () => {
+    const loadContainers = async () => {
         try{
           let data = await fetchAllContainers();
           if(data.containers){
@@ -108,6 +109,21 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
           console.error(e);
         }
       };
+    
+    /**
+     * Calls the fetch API to populate the category data
+     * @returns void
+     */
+    const loadContainer = async () => {
+        try {
+            const json = await fetchItemContainer(itemId, containerId);
+            setContainment(ContainmentModel.buildContainmentData(json));
+        } catch(e:any) {
+            setErrorAlertBody({error: `${e}`});
+            setShowErrorAlert(true);
+            console.error("Failed to fetch the container: ", e);
+        }
+    };
 
     /**
      * Handler to display the modal
@@ -116,9 +132,13 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
     const handleShow = (e: any) => {
         e.preventDefault();
         setContainment(new ContainmentModel());
-        setSelectedContainer('');
+        setSelectedContainer(containerId??'');
         setShowErrorAlert(false);
-        fetchContainers();
+        if(containerId){
+            loadContainer()
+        } else {
+            loadContainers();
+        }
         setVisible(true);
     };
 
@@ -137,7 +157,9 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
         if (containment.quantity < 1 || !selectedContainer)
             return;
         try {
-            const response = await (containerAddItem(selectedContainer, itemId, containment));
+            const response = await (containerId 
+                ? containerUpdateItem(selectedContainer, itemId, containment) 
+                : containerAddItem(selectedContainer, itemId, containment));
             if(response === undefined) {
                 setErrorAlertBody({error: "Malformed Data?"});
                 setShowErrorAlert(true);
@@ -160,7 +182,7 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
 
     return (
         <>
-        <Button variant="outline-secondary" onClick={handleShow}><FaPlus/></Button>
+        <Button variant="outline-secondary" size={containerId ? 'sm' : undefined} onClick={handleShow}>{containerId ? <FaEdit/> : <FaPlus/>}</Button>
 
         <Modal
             show={visible}
@@ -168,7 +190,7 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
             backdrop="static"
             centered>
             <Modal.Header closeButton>
-                <Modal.Title>Add Item to Container</Modal.Title>
+                <Modal.Title>{containerId ? "Update Item Quantity/Position" : "Add Item to Container"}</Modal.Title>
             </Modal.Header>
             <Modal.Body 
                 onKeyDown={(e) => {
@@ -209,7 +231,7 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
                                 </Form.Group>
                             </Form>
                         </Col>
-                        <Col xs={12} className={styles.leftnav_body}>
+                        {!containerId && <Col xs={12} className={styles.leftnav_body}>
                             <Accordion alwaysOpen>
                                 {containers.map((container:ContainerModel) => (
                                     <ContainerNav 
@@ -220,7 +242,7 @@ function AddToContainerModal({callback, itemId}: {callback: Function, itemId:str
                                     />
                                 ))}
                             </Accordion>
-                        </Col>
+                        </Col>}
                     </Row>
                 </Container>
             </Modal.Body>

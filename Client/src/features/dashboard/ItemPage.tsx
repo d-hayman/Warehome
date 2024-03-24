@@ -257,6 +257,7 @@ function ItemPage () {
                 </Col>
             </Row>
 
+            {mode == modes.display && <>
             <Row className={styles.item_containers}>
                 <h3>Containers</h3>
                 <Col xs={12}>
@@ -287,6 +288,11 @@ function ItemPage () {
                             <Row className={styles.container_card_controls}>
                                 <Col xs={12} style={{textAlign:'right'}}>
                                     <ButtonGroup>
+                                        <AddToContainerModal 
+                                            callback={loadContainers} 
+                                            itemId={id??'0'}
+                                            containerId={container.containerId}
+                                            />
                                         <DeletionModal
                                             deletion={containerRemoveItem}
                                             id={item.id}
@@ -303,6 +309,7 @@ function ItemPage () {
                     </Col>
                 ))}
             </Row>
+            </>}
 
         </Container>
     )

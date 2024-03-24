@@ -3,6 +3,7 @@ module Api
       class Items::ItemsController < AuthenticatedController
         before_action -> {check_permissions( :Item, params[:action])}, only: [:index, :show, :create, :update, :destroy, :add_subcategory, :remove_subcategory] 
         before_action :set_item, only: %i[show update destroy fetch_containers add_subcategory remove_subcategory]
+        before_action :set_containment, only: %i[fetch_container]
         before_action :set_subcategory, only: %i[add_subcategory remove_subcategory]
   
         def index
@@ -65,6 +66,10 @@ module Api
           }
         end
 
+        def fetch_container
+          render json: @containment.as_json.merge(container: augment_with_image(@containment.container))
+        end
+
         def add_subcategory
           @item.subcategories << @subcategory
         end
@@ -86,6 +91,10 @@ module Api
         #only applicable to add_subcategory and remove_subcategory, otherwise :id is a item ID
         def set_subcategory
          @subcategory = Subcategory.find(params[:id])
+        end
+  
+        def set_containment
+          @containment =  Containment.find_by(container_id:params[:container_id], item_id:params[:item_id])
         end
   
         def item_params

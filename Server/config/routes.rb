@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       scope module: 'items' do
         resources :items, only: [:index, :show, :create, :update, :destroy] do
           match "containers", to: "items#fetch_containers", via: [:get]
+          match "containers/:container_id", to: "items#fetch_container", via: [:get]
           match "subcategories/:id", to: "items#add_subcategory", via: [:put]
           match "subcategories/:id", to: "items#remove_subcategory", via: [:delete]
         end
