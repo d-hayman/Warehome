@@ -8,11 +8,13 @@ import { ContainerModel } from "../../shared/models/container.model";
 import { Alert, Button, ButtonGroup, Col, Container, Form, Row, Tab, Tabs } from "react-bootstrap";
 import styles from "../../assets/styles/ContainerPage.module.css";
 import noImage from '../../assets/img/imagenotfound.png';
-import { createContainer, deleteContainer, fetchContainer, updateContainer } from "../../shared/services/containers.service";
+import { containerRemoveItem, createContainer, deleteContainer, fetchAllContainerItems, fetchAllContainers, fetchContainer, updateContainer } from "../../shared/services/containers.service";
 import { listifyErrors } from "../../shared/utils/responseHelpers";
 import DeletionModal from "../../shared/components/DeletionModal";
-import { FaArrowLeft, FaBan, FaEdit, FaTrash } from "react-icons/fa";
+import { FaArrowUp, FaBan, FaEdit, FaHome, FaPlus, FaTrash } from "react-icons/fa";
 import { Tooltip } from "@mui/material";
+import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
+import { ContainmentModel } from "../../shared/models/containment.model";
 
 enum modes { 
     display,
@@ -28,6 +30,10 @@ function ContainerPage () {
     const [container, setContainer] = useState<ContainerModel>(new ContainerModel());
     const [editContainer, setEditContainer] = useState(container);
     const [mode, setMode] = useState(modes.display);
+    
+    const {displayMode, displayToggle} = useDisplayModeToggle();
+    const [items, setItems] = useState<ContainmentModel[]>([]);
+    const [children, setChildren] = useState<ContainerModel[]>([]);
 
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [errorAlertBody, setErrorAlertBody] = useState<any>({});
@@ -67,8 +73,56 @@ function ContainerPage () {
         }
     };
 
+    const loadItems = async () => {
+        // no need to fetch in create mode
+        if(location.pathname.endsWith("/new")){
+            return;
+        }
+        try {
+            const json = await fetchAllContainerItems(id);
+            const items:ContainmentModel[] = [];
+            if(json.items){
+                for (const item of json.items){
+                    items.push(ContainmentModel.buildContainmentData(item));
+                }
+            }
+            setItems(items);
+        } catch(e:any) {
+            setErrorAlertBody({error: `${e}`});
+            setShowErrorAlert(true);
+            console.error("Failed to fetch the containers: ", e);
+        }
+    }
+    
+    /**
+     * function to fetch child containers
+     * @param e eventKey
+     * @returns void
+     */
+    const loadChildren = async () => {
+        // no need to fetch in create mode
+        if(location.pathname.endsWith("/new")){
+            return;
+        }
+        try{
+            let data = await fetchAllContainers(id);
+            if(data.containers){
+            const containers = []
+            for(const c of data.containers){
+                containers.push(ContainerModel.buildContainerData(c));
+            }
+    
+            setChildren(containers);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     useEffect(() => {
         loadCurrentContainer();
+        loadItems();
+        loadChildren();
     }, [id, location.pathname]);
 
     /**
@@ -177,11 +231,19 @@ function ContainerPage () {
                 <Col md={12} lg={8} className={styles.container_attributes}>
                     <div className={styles.container_controls}>
                         <ButtonGroup>
-                            {id != "new" &&
-                            <Tooltip title="Back to Dashboard">
-                                <Button variant="outline-primary" onClick={()=>{navigate('/dashboard')}}><FaArrowLeft/></Button>
+                            {container.parentId && 
+                            <Tooltip title="Up One">
+                                <Button variant="outline-primary" onClick={()=>{navigate(`/container/${container.parentId}`)}}><FaArrowUp/></Button>
                             </Tooltip>
                             }
+                        
+                            {!location.pathname.endsWith("/new") &&
+                            <Tooltip title="Back to Dashboard">
+                                <Button variant="outline-primary" onClick={()=>{navigate('/dashboard')}}><FaHome/></Button>
+                            </Tooltip>
+                            }
+                        </ButtonGroup>
+                        <ButtonGroup style={{marginLeft:"1rem"}}>
                             {mode === modes.display && 
                             <Tooltip title="Edit Container">
                                 <Button variant="outline-secondary" onClick={handleEdit}><FaEdit/></Button>
@@ -192,7 +254,7 @@ function ContainerPage () {
                                 <Button variant="outline-secondary" onClick={handleCancel}><FaBan/></Button>
                             </Tooltip>
                             }
-                            {id != "new" && 
+                            {!location.pathname.endsWith("/new") && 
                             <DeletionModal 
                                 deletion={deleteContainer} 
                                 title={container.name} 
@@ -262,8 +324,91 @@ function ContainerPage () {
                 justify
             >
                 <Tab eventKey="items" title="Items">
+                    <Row className={styles.tab_section}>
+                        <Col xs={12}>
+                            <div className={styles.container_controls}>
+                                <ButtonGroup>
+                                </ButtonGroup>
+                                <span className={`d-none d-md-inline-block ${styles.dashboard_display_toggle}`}>{displayToggle}</span>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        {items.map((containment:ContainmentModel) => (
+                            <Col key={containment.itemId} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.container_card}>
+                                <Container className={styles.container_card_inner}>
+                                    <Link to={`/item/${containment.itemId}`}>
+                                    <Row>
+                                        <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.container_image}>
+                                            <img src={(containment.item?.image_url) ? containment.item.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
+                                        </Col>
+                                        <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
+                                            <b>{containment.item?.description}</b><hr/>
+                                            Quantity: {containment.quantity}<br/>
+                                            Position: {containment.position}
+                                        </Col>
+                                    </Row>
+                                    </Link>
+                                    <Row className={styles.container_card_controls}>
+                                        <Col xs={12} style={{textAlign:'right'}}>
+                                            <ButtonGroup>
+                                                <DeletionModal
+                                                    deletion={containerRemoveItem}
+                                                    id={containment.itemId}
+                                                    title={`${containment.item?.description} from ${container.name}`}
+                                                    parent={container.id}
+                                                    buttonSize='sm'
+                                                    buttonBody={<FaTrash/>}
+                                                    callback={loadItems}
+                                                />
+                                            </ButtonGroup>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Col>
+                        ))}
+                    </Row>
                 </Tab>
                 <Tab eventKey="containers" title="Containers">
+                    <Row className={styles.tab_section}>
+                        <Col xs={12}>
+                            <div className={styles.container_controls}>
+                                <ButtonGroup>
+                                    <Tooltip title="Create new inner container" placement="bottom">
+                                        <Button variant="outline-secondary" onClick={()=>{navigate(`/container/${id}/new`)}}>
+                                            <FaPlus/>
+                                        </Button>
+                                    </Tooltip>
+                                </ButtonGroup>
+                                <span className={`d-none d-md-inline-block ${styles.dashboard_display_toggle}`}>{displayToggle}</span>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        {children.map((container:ContainerModel) => (
+                            <Col key={container.id} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.container_card}>
+                                <Container className={styles.container_card_inner}>
+                                    <Link to={`/container/${container.id}`}>
+                                    <Row>
+                                        <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.container_image}>
+                                            <img src={(container.image_url) ? container.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
+                                        </Col>
+                                        <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
+                                            <b>{container.name}</b><br/>
+                                            {container.description}
+                                        </Col>
+                                    </Row>
+                                    </Link>
+                                    <Row className={styles.container_card_controls}>
+                                        <Col xs={12} style={{textAlign:'right'}}>
+                                            <ButtonGroup>
+                                            </ButtonGroup>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Col>
+                        ))}
+                    </Row>
                 </Tab>
             </Tabs>}
 

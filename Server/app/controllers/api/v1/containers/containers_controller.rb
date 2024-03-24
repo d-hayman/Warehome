@@ -2,9 +2,9 @@ module Api
     module V1
       class Containers::ContainersController < AuthenticatedController
         before_action -> {check_permissions( :Container, params[:action])}, only: [:index, :show, :create, :update, :destroy, :add_item, :remove_item] 
-        before_action :set_container, only: %i[show update destroy add_item remove_item]
+        before_action :set_container, only: %i[show update destroy fetch_items add_item remove_item]
         before_action :set_item, only: %i[add_item remove_item]
-        before_action :set_containment, only: %i[update_item]
+        before_action :set_containment, only: %i[fetch_item update_item]
   
         def index
           @containers = params.has_key?(:parent) ? Container.children_of(params[:parent]) : Container.top_level
@@ -45,6 +45,16 @@ module Api
           @container.destroy
         end
 
+        def fetch_items
+          render json: {
+            items: @container.containments.map{|containment| containment.as_json.merge(item: augment_with_image(containment.item))}
+          }
+        end
+
+        def fetch_item
+          render json: @containment.as_json.merge(container: augment_with_image(@containment.container))
+        end
+
         def add_item
           containment = @container.containments.new(containment_params)
           containment.item = @item
@@ -70,7 +80,7 @@ module Api
         private
   
         def set_container
-          if ["add_item","remove_item","update_item"].include? params[:action]
+          if ["fetch_items","add_item","remove_item","update_item"].include? params[:action]
             @container = Container.find(params[:container_id])
           else
             @container = Container.find(params[:id])

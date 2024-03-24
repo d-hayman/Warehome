@@ -159,6 +159,62 @@ async function deleteContainer(id:string|undefined) {
 }
 
 /**
+ * Calls the API to fetch container items
+ * @param containerId 
+ * @returns 
+ */
+async function fetchAllContainerItems(containerId:string|undefined) {
+    if(!containerId) {
+        console.error("Tried to fetch items with no container id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${CONTAINER_ITEMS_API_URL}`.replace(':containerId', containerId), {
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(!response.ok){
+        throw new Error(response.statusText);
+    }
+
+    return response.json();
+}
+
+/**
+ * Calls the API to fetch a container item
+ * @param containerId
+ * @param itemId 
+ * @returns 
+ */
+async function fetchContainerItem(containerId:string|undefined,itemId:string|undefined) {
+    if(!containerId) {
+        console.error("Tried to fetch container with no container id?");
+        return;
+    }
+
+    if(!itemId) {
+        console.error("Tried to fetch container with no item id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${CONTAINER_ITEMS_API_URL}/${itemId}`.replace(':containerId', containerId), {
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if(!response.ok){
+        throw new Error(response.statusText);
+    }
+
+    return response.json();
+}
+
+/**
  * Calls the API to add an item to a container
  * @param containerId 
  * @param id 
@@ -285,6 +341,8 @@ export {
     updateContainer, 
     deleteContainer, 
     
+    fetchAllContainerItems,
+    fetchContainerItem,
     containerAddItem, 
     containerUpdateItem,
     containerRemoveItem}
