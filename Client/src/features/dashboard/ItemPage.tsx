@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ItemModel } from "../../shared/models/item.model";
-import { Alert, Button, ButtonGroup, Col, Container, Form, Row } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Col, Container, Form, Row, Tab, Tabs } from "react-bootstrap";
 import styles from "../../assets/styles/ItemPage.module.css";
 import noImage from '../../assets/img/imagenotfound.png';
 import { createItem, deleteItem, fetchAllItemContainers, fetchItem, updateItem } from "../../shared/services/items.service";
@@ -257,59 +257,69 @@ function ItemPage () {
                 </Col>
             </Row>
 
-            {mode == modes.display && <>
-            <Row className={styles.item_containers}>
-                <h3>Containers</h3>
-                <Col xs={12}>
-                    <div className={styles.item_controls}>
-                        <ButtonGroup>
-                            <AddToContainerModal callback={loadContainers} itemId={id??'0'}/>
-                        </ButtonGroup>
-                        <span className={`d-none d-md-inline-block ${styles.dashboard_display_toggle}`}>{displayToggle}</span>
-                    </div>
-                </Col>
-            </Row>
-            <Row>
-                {containers.map((container:ContainmentModel) => (
-                    <Col key={container.containerId} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.container_card}>
-                        <Container className={styles.container_card_inner}>
-                            <Link to={`/container/${container.containerId}`}>
-                            <Row>
-                                <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.container_image}>
-                                    <img src={(container.container?.image_url) ? container.container.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
-                                </Col>
-                                <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
-                                    <b>{container.container?.name}</b><hr/>
-                                    Quantity: {container.quantity}<br/>
-                                    Position: {container.position}
-                                </Col>
-                            </Row>
-                            </Link>
-                            <Row className={styles.container_card_controls}>
-                                <Col xs={12} style={{textAlign:'right'}}>
-                                    <ButtonGroup>
-                                        <AddToContainerModal 
-                                            callback={loadContainers} 
-                                            itemId={id??'0'}
-                                            containerId={container.containerId}
-                                            />
-                                        <DeletionModal
-                                            deletion={containerRemoveItem}
-                                            id={item.id}
-                                            title={`${item.description} from ${container.container?.name}`}
-                                            parent={container.containerId}
-                                            buttonSize='sm'
-                                            buttonBody={<FaTrash/>}
-                                            callback={loadContainers}
-                                        />
-                                    </ButtonGroup>
-                                </Col>
-                            </Row>
-                        </Container>
-                    </Col>
-                ))}
-            </Row>
-            </>}
+            {mode == modes.display &&
+            <Tabs
+                defaultActiveKey="containers"
+                id="justify-tab-example"
+                className="mb-3"
+                justify
+            >
+                <Tab eventKey="containers" title="Containers">
+                    <Row className={styles.item_containers}>
+                        <Col xs={12}>
+                            <div className={styles.item_controls}>
+                                <ButtonGroup>
+                                    <AddToContainerModal callback={loadContainers} itemId={id??'0'}/>
+                                </ButtonGroup>
+                                <span className={`d-none d-md-inline-block ${styles.dashboard_display_toggle}`}>{displayToggle}</span>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        {containers.map((container:ContainmentModel) => (
+                            <Col key={container.containerId} xs={12} md={displayMode == displayModes.grid ? 4 : 12} className={styles.container_card}>
+                                <Container className={styles.container_card_inner}>
+                                    <Link to={`/container/${container.containerId}`}>
+                                    <Row>
+                                        <Col xs={4} md={displayMode == displayModes.grid ? 12 : 4} className={styles.container_image}>
+                                            <img src={(container.container?.image_url) ? container.container.image_url : noImage} style={{maxHeight: '200px', maxWidth:'100%'}}/>
+                                        </Col>
+                                        <Col xs={8} md={displayMode == displayModes.grid ? 12 : 8}>
+                                            <b>{container.container?.name}</b><hr/>
+                                            Quantity: {container.quantity}<br/>
+                                            Position: {container.position}
+                                        </Col>
+                                    </Row>
+                                    </Link>
+                                    <Row className={styles.container_card_controls}>
+                                        <Col xs={12} style={{textAlign:'right'}}>
+                                            <ButtonGroup>
+                                                <AddToContainerModal 
+                                                    callback={loadContainers} 
+                                                    itemId={id??'0'}
+                                                    containerId={container.containerId}
+                                                    />
+                                                <DeletionModal
+                                                    deletion={containerRemoveItem}
+                                                    id={item.id}
+                                                    title={`${item.description} from ${container.container?.name}`}
+                                                    parent={container.containerId}
+                                                    buttonSize='sm'
+                                                    buttonBody={<FaTrash/>}
+                                                    callback={loadContainers}
+                                                />
+                                            </ButtonGroup>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </Col>
+                        ))}
+                    </Row>
+                </Tab>
+                <Tab eventKey="categories" title="Categories">
+
+                </Tab>
+            </Tabs>}
 
         </Container>
     )

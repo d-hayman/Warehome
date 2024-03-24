@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ContainerModel } from "../../shared/models/container.model";
-import { Alert, Button, ButtonGroup, Col, Container, Form, Row } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Col, Container, Form, Row, Tab, Tabs } from "react-bootstrap";
 import styles from "../../assets/styles/ContainerPage.module.css";
 import noImage from '../../assets/img/imagenotfound.png';
 import { createContainer, deleteContainer, fetchContainer, updateContainer } from "../../shared/services/containers.service";
@@ -253,6 +253,19 @@ function ContainerPage () {
                     </>}
                 </Col>
             </Row>
+
+            {mode == modes.display &&
+            <Tabs
+                defaultActiveKey="items"
+                id="justify-tab-example"
+                className="mb-3"
+                justify
+            >
+                <Tab eventKey="items" title="Items">
+                </Tab>
+                <Tab eventKey="containers" title="Containers">
+                </Tab>
+            </Tabs>}
 
         </Container>
     )
