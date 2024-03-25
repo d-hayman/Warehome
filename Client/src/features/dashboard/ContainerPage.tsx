@@ -15,6 +15,7 @@ import { FaArrowUp, FaBan, FaEdit, FaHome, FaPlus, FaTrash } from "react-icons/f
 import { Tooltip } from "@mui/material";
 import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
 import { ContainmentModel } from "../../shared/models/containment.model";
+import AddToContainerModal from "./components/AddToContainerModal";
 
 enum modes { 
     display,
@@ -355,6 +356,11 @@ function ContainerPage () {
                                     <Row className={styles.container_card_controls}>
                                         <Col xs={12} style={{textAlign:'right'}}>
                                             <ButtonGroup>
+                                                <AddToContainerModal 
+                                                    callback={loadItems} 
+                                                    itemId={containment.itemId}
+                                                    containerId={id??'0'}
+                                                    />
                                                 {hasRemoveItem &&
                                                 <DeletionModal
                                                     deletion={containerRemoveItem}
