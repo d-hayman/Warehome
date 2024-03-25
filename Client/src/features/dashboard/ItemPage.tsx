@@ -28,6 +28,9 @@ enum modes {
  * @returns JSX.Element for the item page component
  */
 function ItemPage () {
+    const hasDeleteItem = (localStorage.getItem("permissions")??'').includes("Item:destroy");
+    const hasRemoveItem = (localStorage.getItem("permissions")??'').includes("Container:remove_item");
+
     const { id } = useParams();
     const [item, setItem] = useState<ItemModel>(new ItemModel());
     const [editItem, setEditItem] = useState(item);
@@ -208,7 +211,7 @@ function ItemPage () {
                                 <Button variant="outline-secondary" onClick={handleCancel}><FaBan/></Button>
                             </Tooltip>
                             }
-                            {id != "new" && 
+                            {(hasDeleteItem && id != "new") && 
                             <DeletionModal 
                                 deletion={deleteItem} 
                                 title={item.description} 
@@ -299,6 +302,7 @@ function ItemPage () {
                                                     itemId={id??'0'}
                                                     containerId={container.containerId}
                                                     />
+                                                {hasRemoveItem &&
                                                 <DeletionModal
                                                     deletion={containerRemoveItem}
                                                     id={item.id}
@@ -307,7 +311,7 @@ function ItemPage () {
                                                     buttonSize='sm'
                                                     buttonBody={<FaTrash/>}
                                                     callback={loadContainers}
-                                                />
+                                                />}
                                             </ButtonGroup>
                                         </Col>
                                     </Row>

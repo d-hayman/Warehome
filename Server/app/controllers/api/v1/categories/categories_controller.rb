@@ -1,7 +1,7 @@
 module Api
   module V1
     class Categories::CategoriesController < AuthenticatedController
-      before_action -> {check_permissions( :Category, params[:action])}, only: [:index, :show, :create, :update, :destroy] 
+      before_action -> {check_permissions( :Category, params[:action])}
       before_action :set_category, only: %i[show update destroy]
 
       def index

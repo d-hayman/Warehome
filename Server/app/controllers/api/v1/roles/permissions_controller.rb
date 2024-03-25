@@ -5,7 +5,7 @@ module Api
         before_action :set_permission, only: %i[show]
 
         def index
-          @permissions = Permission.all
+          @permissions = Permission.all.order(model: :asc)
     
           total_permissions_count = Permission.count
     

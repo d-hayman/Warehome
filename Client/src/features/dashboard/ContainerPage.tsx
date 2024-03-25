@@ -26,6 +26,9 @@ enum modes {
  * @returns JSX.Element for the container page component
  */
 function ContainerPage () {
+    const hasDeleteContainer = (localStorage.getItem("permissions")??'').includes("Container:destroy");
+    const hasRemoveItem = (localStorage.getItem("permissions")??'').includes("Container:remove_item");
+
     const { id, parentId } = useParams();
     const [container, setContainer] = useState<ContainerModel>(new ContainerModel());
     const [editContainer, setEditContainer] = useState(container);
@@ -254,7 +257,7 @@ function ContainerPage () {
                                 <Button variant="outline-secondary" onClick={handleCancel}><FaBan/></Button>
                             </Tooltip>
                             }
-                            {!location.pathname.endsWith("/new") && 
+                            {(hasDeleteContainer && !location.pathname.endsWith("/new")) && 
                             <DeletionModal 
                                 deletion={deleteContainer} 
                                 title={container.name} 
@@ -352,6 +355,7 @@ function ContainerPage () {
                                     <Row className={styles.container_card_controls}>
                                         <Col xs={12} style={{textAlign:'right'}}>
                                             <ButtonGroup>
+                                                {hasRemoveItem &&
                                                 <DeletionModal
                                                     deletion={containerRemoveItem}
                                                     id={containment.itemId}
@@ -360,7 +364,7 @@ function ContainerPage () {
                                                     buttonSize='sm'
                                                     buttonBody={<FaTrash/>}
                                                     callback={loadItems}
-                                                />
+                                                />}
                                             </ButtonGroup>
                                         </Col>
                                     </Row>

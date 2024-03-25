@@ -1,7 +1,7 @@
 module Api
     module V1
       class Containers::ContainersController < AuthenticatedController
-        before_action -> {check_permissions( :Container, params[:action])}, only: [:index, :show, :create, :update, :destroy, :add_item, :remove_item] 
+        before_action -> {check_permissions( :Container, params[:action])}
         before_action :set_container, only: %i[show update destroy fetch_items add_item remove_item]
         before_action :set_item, only: %i[add_item remove_item]
         before_action :set_containment, only: %i[fetch_item update_item]

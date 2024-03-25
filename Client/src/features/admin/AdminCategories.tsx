@@ -24,32 +24,34 @@ import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import DeletionModal from '../../shared/components/DeletionModal';
 
 function AdminCategories() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [categories, setCategories] = useState<CategoryModel[]>([]);
-    const [, setLoading] = useState(true);
-    const [,setError] = useState<any>(null);
-    const [totalCategories, setTotalCategories] = useState(0);
+  const hasDeleteCategory = (localStorage.getItem("permissions")??'').includes("Category:destroy");
 
-    async function loadCategories() {
-        try {
-            //MUI paginator is 0-indexed but Kaminari is 1-indexed
-            let data = await fetchAllCategories();
-            if(data.categories) {
-                setCategories(data.categories);
-                setTotalCategories(data.total_count);
-            }
-            setLoading(false);
-        } catch(e) {
-            setError(e);
-            setLoading(false);
-            console.error("Failed to fetch categories: ", e);
-        }
-    }
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [categories, setCategories] = useState<CategoryModel[]>([]);
+  const [, setLoading] = useState(true);
+  const [,setError] = useState<any>(null);
+  const [totalCategories, setTotalCategories] = useState(0);
 
-    useEffect(() => {
-        loadCategories();
-    }, []);
+  async function loadCategories() {
+      try {
+          //MUI paginator is 0-indexed but Kaminari is 1-indexed
+          let data = await fetchAllCategories();
+          if(data.categories) {
+              setCategories(data.categories);
+              setTotalCategories(data.total_count);
+          }
+          setLoading(false);
+      } catch(e) {
+          setError(e);
+          setLoading(false);
+          console.error("Failed to fetch categories: ", e);
+      }
+  }
+
+  useEffect(() => {
+      loadCategories();
+  }, []);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = Math.max(0, (1 + page) * rowsPerPage - totalCategories);
@@ -106,6 +108,7 @@ function AdminCategories() {
                         <FaEdit/>
                     </Button>
                   </Tooltip>
+                  {hasDeleteCategory &&
                   <DeletionModal 
                     title={row.name} 
                     deletion={deleteCategory} 
@@ -113,7 +116,7 @@ function AdminCategories() {
                     callback={loadCategories} 
                     buttonBody={<FaTrash/>} 
                     buttonSize='sm'
-                  />
+                  />}
                 </ButtonGroup>
               </TableCell>
             </TableRow>

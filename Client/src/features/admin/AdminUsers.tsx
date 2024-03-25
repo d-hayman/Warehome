@@ -25,33 +25,35 @@ import DeletionModal from '../../shared/components/DeletionModal';
 import { FaTrash } from 'react-icons/fa';
 
 function AdminUsers() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [users, setUsers] = useState<UserModel[]>([]);
-    const [, setLoading] = useState(true);
-    const [,setError] = useState<any>(null);
-    const [totalUsers, setTotalUsers] = useState(0);
+  const hasDeleteUser = (localStorage.getItem("permissions")??'').includes("User:destroy");
 
-    async function loadUsers() {
-        try {
-            //MUI paginator is 0-indexed but Kaminari is 1-indexed
-            let data = await fetchAllUsers(page+1, rowsPerPage);
-            if(data.users) {
-                setUsers(data.users);
-                setTotalUsers(data.total_count);
-                setRowsPerPage(Number.parseInt(data.per_page));
-            }
-            setLoading(false);
-        } catch(e) {
-            setError(e);
-            setLoading(false);
-            console.error("Failed to fetch users: ", e);
-        }
-    }
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [users, setUsers] = useState<UserModel[]>([]);
+  const [, setLoading] = useState(true);
+  const [,setError] = useState<any>(null);
+  const [totalUsers, setTotalUsers] = useState(0);
 
-    useEffect(() => {
-        loadUsers();
-    }, [rowsPerPage, page])
+  async function loadUsers() {
+      try {
+          //MUI paginator is 0-indexed but Kaminari is 1-indexed
+          let data = await fetchAllUsers(page+1, rowsPerPage);
+          if(data.users) {
+              setUsers(data.users);
+              setTotalUsers(data.total_count);
+              setRowsPerPage(Number.parseInt(data.per_page));
+          }
+          setLoading(false);
+      } catch(e) {
+          setError(e);
+          setLoading(false);
+          console.error("Failed to fetch users: ", e);
+      }
+  }
+
+  useEffect(() => {
+      loadUsers();
+  }, [rowsPerPage, page])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = Math.max(0, rowsPerPage - users.length);
@@ -99,6 +101,7 @@ function AdminUsers() {
                     callback={loadUsers} 
                     user={row}
                   />
+                  {hasDeleteUser &&
                   <DeletionModal 
                     deletion={deleteUser} 
                     id={row.id} 
@@ -106,7 +109,7 @@ function AdminUsers() {
                     callback={loadUsers} 
                     buttonBody={<FaTrash/>} 
                     buttonSize='sm'
-                  />
+                  />}
                 </ButtonGroup>
               </TableCell>
             </TableRow>

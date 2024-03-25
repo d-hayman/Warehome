@@ -39,6 +39,8 @@ import DeletionModal from "../../shared/components/DeletionModal";
  * @returns JSX.Element
  */
 function AdminCategoriesEdit() {
+    const hasDeleteSubcategory = (localStorage.getItem("permissions")??'').includes("Subcategory:destroy");
+
     const [category, setCategory] = useState<CategoryModel>(new CategoryModel());
     const [subcategories, setSubcategories] = useState<SubcategoryModel[]>([]);
     const [nextNew, setNextNew] = useState(1);
@@ -328,13 +330,14 @@ function AdminCategoriesEdit() {
                             <Button size="sm" variant="outline-primary" disabled={!row.dirty} onClick={()=>submitSubcategory(row)}>
                                 <FaSave/>
                             </Button>
+                            {(hasDeleteSubcategory || (""+row.id).startsWith("new")) &&
                             <DeletionModal 
                                 title={row.name} 
                                 deletion={removeSubcategory} 
                                 id={row.id} 
                                 buttonBody={<FaTrash/>} 
                                 buttonSize='sm'
-                            />
+                            />}
                         </ButtonGroup>
                     </TableCell>
                 </TableRow>

@@ -1,7 +1,7 @@
 module Api
     module V1
       class Items::ItemsController < AuthenticatedController
-        before_action -> {check_permissions( :Item, params[:action])}, only: [:index, :show, :create, :update, :destroy, :add_subcategory, :remove_subcategory] 
+        before_action -> {check_permissions( :Item, params[:action])}
         before_action :set_item, only: %i[show update destroy fetch_containers add_subcategory remove_subcategory]
         before_action :set_containment, only: %i[fetch_container]
         before_action :set_subcategory, only: %i[add_subcategory remove_subcategory]

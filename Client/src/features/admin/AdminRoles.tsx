@@ -24,32 +24,34 @@ import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import DeletionModal from '../../shared/components/DeletionModal';
 
 function AdminRoles() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [roles, setRoles] = useState<RoleModel[]>([]);
-    const [, setLoading] = useState(true);
-    const [,setError] = useState<any>(null);
-    const [totalRoles, setTotalRoles] = useState(0);
+  const hasDeleteRole = (localStorage.getItem("permissions")??'').includes("Role:destroy");
+  
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [roles, setRoles] = useState<RoleModel[]>([]);
+  const [, setLoading] = useState(true);
+  const [,setError] = useState<any>(null);
+  const [totalRoles, setTotalRoles] = useState(0);
 
-    async function loadRoles() {
-        try {
-            //MUI paginator is 0-indexed but Kaminari is 1-indexed
-            let data = await fetchAllRoles();
-            if(data.roles) {
-                setRoles(data.roles);
-                setTotalRoles(data.total_count);
-            }
-            setLoading(false);
-        } catch(e) {
-            setError(e);
-            setLoading(false);
-            console.error("Failed to fetch roles: ", e);
-        }
-    }
+  async function loadRoles() {
+      try {
+          //MUI paginator is 0-indexed but Kaminari is 1-indexed
+          let data = await fetchAllRoles();
+          if(data.roles) {
+              setRoles(data.roles);
+              setTotalRoles(data.total_count);
+          }
+          setLoading(false);
+      } catch(e) {
+          setError(e);
+          setLoading(false);
+          console.error("Failed to fetch roles: ", e);
+      }
+  }
 
-    useEffect(() => {
-        loadRoles();
-    }, []);
+  useEffect(() => {
+      loadRoles();
+  }, []);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = Math.max(0, (1 + page) * rowsPerPage - totalRoles);
@@ -102,6 +104,7 @@ function AdminRoles() {
                         <FaEdit/>
                     </Button>
                   </Tooltip>
+                  {hasDeleteRole &&
                   <DeletionModal 
                     title={row.name} 
                     deletion={deleteRole} 
@@ -109,7 +112,7 @@ function AdminRoles() {
                     callback={loadRoles} 
                     buttonBody={<FaTrash/>} 
                     buttonSize='sm'
-                  />
+                  />}
                 </ButtonGroup>
               </TableCell>
             </TableRow>
