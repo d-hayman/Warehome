@@ -19,6 +19,8 @@ module Api
             )
           end
 
+          @items = @items.distinct
+
           total_items_count = @items.count
 
           # finally, paginate the results
@@ -34,6 +36,8 @@ module Api
   
         def show
           render json: augment_with_image(@item)
+                          .as_json.merge(subcategories: @item.subcategories
+                          .map{|sub| sub.as_json.merge(category: sub.category)})
         end
   
         def create
@@ -72,10 +76,14 @@ module Api
 
         def add_subcategory
           @item.subcategories << @subcategory
+
+          render json: @item.subcategories
         end
 
         def remove_subcategory
           @item.subcategories.destroy @subcategory
+
+          render json: @item.subcategories
         end
   
         private

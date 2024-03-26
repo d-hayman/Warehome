@@ -2,7 +2,7 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 
-import { ITEMS_API_URL, ITEM_CONTAINERS_API_URL } from "../../constants";
+import { ITEMS_API_URL, ITEM_CONTAINERS_API_URL, ITEM_SUBCATEGORIES_API_URL } from "../../constants";
 import { ItemModel } from "../models/item.model";
 import { objectToFormData } from "../utils/formDataHelper";
 import { objectToQueryString } from "../utils/queryStringHelper";
@@ -216,4 +216,80 @@ async function fetchItemContainer(itemId:string|undefined,containerId:string|und
     return response.json();
 }
 
-export {fetchAllItems, fetchItem, createItem, updateItem, deleteItem, fetchAllItemContainers, fetchItemContainer};
+/**
+ * Calls the API to add a subcategory to an item
+ * @param itemId 
+ * @param id 
+ * @returns 
+ */
+async function itemAddSubcategory(itemId:string|undefined, id:string|undefined) {
+    if(!itemId) {
+        console.error("Tried to add subcategory with no item id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to add subcategory with no id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${ITEM_SUBCATEGORIES_API_URL}/${id}`.replace(':itemId', itemId), {
+        method: "PUT",
+        headers: {
+            "Authorization": token
+        },
+    });
+
+    if (!response.ok && !hasJson(response)) {
+        throw new Error(response.statusText);
+    }
+
+    return response;
+}
+
+/**
+ * Calls the API to remove a subcategory from an item
+ * @param itemId 
+ * @param id 
+ * @returns 
+ */
+async function itemRemoveSubcategory(itemId:string|undefined, id:string|undefined) {
+    if(!itemId) {
+        console.error("Tried to remove subcategory with no item id?");
+        return;
+    }
+
+    if(!id) {
+        console.error("Tried to remove subcategory with no id?");
+        return;
+    }
+
+    const token = localStorage.getItem('token') ?? '';
+    const response = await fetch(`${ITEM_SUBCATEGORIES_API_URL}/${id}`.replace(':itemId', itemId), {
+        method: "DELETE",
+        headers: {
+            "Authorization": token,
+        },
+    });
+
+    if (!response.ok && !hasJson(response)) {
+        throw new Error(response.statusText);
+    }
+
+    return response;
+}
+
+export {
+    fetchAllItems, 
+    fetchItem, 
+    createItem, 
+    updateItem, 
+    deleteItem, 
+    
+    fetchAllItemContainers, 
+    fetchItemContainer,
+
+    itemAddSubcategory,
+    itemRemoveSubcategory
+};

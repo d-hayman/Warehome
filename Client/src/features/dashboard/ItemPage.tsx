@@ -12,15 +12,27 @@ import { createItem, deleteItem, fetchAllItemContainers, fetchItem, updateItem }
 import { listifyErrors } from "../../shared/utils/responseHelpers";
 import DeletionModal from "../../shared/components/DeletionModal";
 import { FaArrowLeft, FaBan, FaEdit, FaTrash } from "react-icons/fa";
-import { Tooltip } from "@mui/material";
+import { Chip, Tooltip } from "@mui/material";
 import AddToContainerModal from "./components/AddToContainerModal";
 import { ContainmentModel } from "../../shared/models/containment.model";
 import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
 import { containerRemoveItem } from "../../shared/services/containers.service";
+import SelectItemCategoriesModal from "./components/SelectItemCategoriesModal";
 
 enum modes { 
     display,
     edit
+}
+
+class CategoryChips {
+    id: string = '';
+    name: string = '';
+    subcategories: SubCategoryChip [] = [];
+}
+
+class SubCategoryChip {
+    id: string = '';
+    name: string = '';
 }
 
 /**
@@ -33,6 +45,7 @@ function ItemPage () {
 
     const { id } = useParams();
     const [item, setItem] = useState<ItemModel>(new ItemModel());
+    const [categoryChips, setCategoryChips] = useState<CategoryChips[]>([]);
     const [editItem, setEditItem] = useState(item);
     const [mode, setMode] = useState(modes.display);
 
@@ -58,7 +71,23 @@ function ItemPage () {
         }
         try {
             const json = await fetchItem(id);
+
+            // populate base item data
             setItem(ItemModel.buildItemData(json));
+
+            // populate the category data
+            let _categoryChips:CategoryChips[] = [];
+            if(json.subcategories && Array.isArray(json.subcategories)) {
+                for(const sub of json.subcategories){
+                    const cat = _categoryChips.filter(c => c.name == sub.category?.name);
+                    if(cat.length > 0){
+                        cat[0].subcategories.push({name: sub.name, id: sub.id});
+                    } else {
+                        _categoryChips.push({id: sub.category.id, name: sub.category.name, subcategories: [{name: sub.name, id: sub.id}]});
+                    }
+                }
+            }
+            setCategoryChips(_categoryChips);
         } catch(e:any) {
             setErrorAlertBody({error: `${e}`});
             setShowErrorAlert(true);
@@ -321,7 +350,32 @@ function ItemPage () {
                     </Row>
                 </Tab>
                 <Tab eventKey="categories" title="Categories">
+                    <Row className={styles.item_containers}>
+                        <Col xs={12}>
+                            <div className={styles.item_controls}>
+                                <ButtonGroup>
+                                    <SelectItemCategoriesModal callback={loadCurrentItem} itemId={id??'0'}/>
+                                </ButtonGroup>
+                            </div>
+                        </Col>
+                    </Row>
 
+                    <Row className={styles.item_containers}>
+                        <Col xs={12}>
+                            {categoryChips
+                                .sort((a,b) => a.name.localeCompare(b.name))
+                                .map((category:CategoryChips) => (
+                                    <div key={category.id} className="mb-3">
+                                        <h3>{category.name}</h3>
+                                        {category.subcategories
+                                            .sort((a,b) => a.name.localeCompare(b.name))
+                                            .map((subcategory:SubCategoryChip) => (
+                                                <Chip key={subcategory.id} label={subcategory.name} className="ms-1 me-1"/>
+                                        ))}
+                                    </div>
+                            ))}
+                        </Col>
+                    </Row>
                 </Tab>
             </Tabs>}
 
