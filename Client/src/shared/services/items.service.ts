@@ -13,12 +13,13 @@ import { hasJson } from "../utils/responseHelpers";
  * @param page 
  * @returns 
  */
-async function fetchAllItems(page:number = 1, query: string = '', categories: string[] = [], subcategories: string[] = []) {
+async function fetchAllItems(page:number = 1, query: string = '', categories: string[] = [], subcategories: string[] = [], orderBy: string = '') {
     const queryString = objectToQueryString({
         page: page,
         q: query,
         category_ids: categories,
-        subcategory_ids: subcategories
+        subcategory_ids: subcategories,
+        order_by: orderBy
     })
     const token = localStorage.getItem("token") ?? '';
     const response = await fetch(`${ITEMS_API_URL}${queryString}`, {

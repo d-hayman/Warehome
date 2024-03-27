@@ -28,11 +28,13 @@ function DashboardPage(){
 
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const initialPageFromURL = Number(searchParams.get("page") || 1);
+    const initialPageFromURL = Number(searchParams.get("p") || 1);
     const [page, setPage] = useState(initialPageFromURL);
     const [itemsPerPage, setItemsPerPage] = useState(24);
     const [totalItems, setTotalItems] = useState(0);
     const [hasLoaded, setHasLoaded] = useState(false);
+
+    const [orderBy, setOrderBy] = useState(searchParams.get("b")||"Created");
 
     const {searchQuery, selectedCategories, selectedSubcategories} = useContext(SearchContext);
 
@@ -43,7 +45,7 @@ function DashboardPage(){
      */
     const loadItems = async () => {
         try{
-            let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories);
+            let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories, orderBy);
             if(data.items){
                 const items = [];
                 for(const i of data.items){
@@ -75,10 +77,11 @@ function DashboardPage(){
     useEffect(() => {
         setSearchParams(
             ObjectToValidParams({
-                page: page, 
+                p: page, 
                 q: searchQuery,
-                categories: selectedCategories,
-                subcategories: selectedSubcategories
+                c: selectedCategories,
+                s: selectedSubcategories,
+                b: orderBy
             }) as unknown as URLSearchParams);
     }, [page])
 
@@ -89,13 +92,14 @@ function DashboardPage(){
         } else {
             setSearchParams(
                 ObjectToValidParams({
-                    page: page, 
+                    p: page, 
                     q: searchQuery,
-                    categories: selectedCategories,
-                    subcategories: selectedSubcategories
+                    c: selectedCategories,
+                    s: selectedSubcategories,
+                    b: orderBy
                 }) as unknown as URLSearchParams);
         }
-    }, [searchQuery, selectedCategories, selectedSubcategories]);
+    }, [searchQuery, selectedCategories, selectedSubcategories, orderBy]);
 
     /**
      * Page change handler
@@ -107,15 +111,17 @@ function DashboardPage(){
     
     return (
         <Container className={styles.dashboard_outer}>
-            <Row className="align-items-center">
-                <Col xs={12} className={styles.dashboard_controls}>
-                    <Form.Group controlId="formGridState" style={{display:"inline-block"}}>
-                        <Form.Select defaultValue="Created">
-                            <option>Created</option>
-                            <option>Description</option>
-                        </Form.Select>
-                    </Form.Group>
-                    <Tooltip title="Create new item" style={{marginTop:"-5px", marginLeft:"1rem"}}>
+            <Row className={styles.dashboard_controls}>
+                <Form.Group as={Col}></Form.Group>
+                <Form.Group as={Col} className={`d-none d-xl-inline-block`}></Form.Group>
+                <Form.Group as={Col} controlId="formGridState" style={{display:"inline-block"}}>
+                    <Form.Select defaultValue="Created" onChange={(e) => setOrderBy(e.target.value)}>
+                        <option>Created</option>
+                        <option>Description</option>
+                    </Form.Select>
+                </Form.Group>
+                <Form.Group as={Col} style={{paddingRight:'1rem'}}>
+                    <Tooltip title="Create new item" style={{marginLeft:"1rem"}}>
                         <Button variant="outline-secondary" onClick={()=>{navigate(`/item/new`)}}>
                             <FaPlus/>
                         </Button>
@@ -123,7 +129,9 @@ function DashboardPage(){
                     <span className={`d-none d-md-inline-block`} style={{marginLeft:"1rem"}}>
                         {displayToggle}
                     </span>
-                </Col>
+                </Form.Group>
+            </Row>
+            <Row className="align-items-center">
                 <Col xs={12} className={styles.dashboard_pagination}>
                     <Paginator
                         currentPage={page}

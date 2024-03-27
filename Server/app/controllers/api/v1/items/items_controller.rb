@@ -21,10 +21,14 @@ module Api
 
           @items = @items.distinct
 
+          if params.has_key?(:order_by)
+            @items = params[:order_by] == "Description" ? @items.order(description: :asc) : @items.order(id: :desc)
+          end
+
           total_items_count = @items.count
 
           # finally, paginate the results
-          @items = @items.order(id: :desc).page(params[:page]).per(items_per_page)
+          @items = @items.page(params[:page]).per(items_per_page)
           
           
           render json: {

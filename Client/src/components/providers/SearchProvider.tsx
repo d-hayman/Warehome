@@ -23,8 +23,8 @@ const SearchContext = createContext({} as SearchContextValue);
 const SearchProvider = () => {
     const [searchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("q")||'');
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(searchParams.getAll("c"));
+    const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>(searchParams.getAll("s"));
   
     /**
      * Updates the search query and handles other applicable logic
