@@ -3,7 +3,7 @@
  */
 import { Tooltip } from '@mui/material';
 import { Button, Container, Form, InputGroup, Nav, Navbar } from 'react-bootstrap';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { GiSaucepan } from 'react-icons/gi';
 import { MdLogout, MdSettings } from 'react-icons/md';
 import { useContext, useState } from 'react';
@@ -23,6 +23,7 @@ function NavBar() {
     const [search, setSearch] = useState(searchQuery);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     /**
      * Calls the logout api from auth service
@@ -40,12 +41,21 @@ function NavBar() {
             navigate('/');
         }
     }
+
+    /**
+     * Conditionally navigates to the destination
+     * @param destination 
+     */
+    const conditionalNavigate = (destination:string) => {
+        if(!location.pathname.startsWith(destination))
+            navigate(destination);
+    }
     
     return (
     <div className='app'>
         <Navbar bg="primary" data-bs-theme="dark">
             <Container>
-                <Navbar.Brand onClick={()=>{navigate("/dashboard")}}>Warehome</Navbar.Brand>
+                <Navbar.Brand href="/dashboard">Warehome</Navbar.Brand>
                 <Tooltip title="Sauce">
                     <Link 
                         to="https://github.com/d-hayman/Warehome"
@@ -66,11 +76,12 @@ function NavBar() {
                             onKeyDown={(e) => {
                                 if (e.code === "Enter") {
                                 e.preventDefault();
+                                conditionalNavigate('/dashboard');
                                 emitSearch(search);
                                 }
                             }}
                         />
-                        <Button variant='light' onClick={() => emitSearch(search)}>
+                        <Button variant='light' onClick={() => {conditionalNavigate('/dashboard'); emitSearch(search)}}>
                             <FaMagnifyingGlass/>
                         </Button>
                     </InputGroup>
