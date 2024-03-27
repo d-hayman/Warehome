@@ -20,6 +20,21 @@ export function objectToQueryString(
 }
 
 /**
+ * 
+ * @param obj 
+ * @returns 
+ */
+export function ObjectToValidParams(obj: any) : any {
+    let out:any = {};
+    for (let propertyName in obj) {
+        if (isValidProperty(obj, propertyName)) {
+            out[propertyName] = obj[propertyName];
+        }
+    }
+    return out;
+}
+
+/**
  * Ensures that the object property being included in the data is worth mentioning
  * @param obj object whose property must be checked
  * @param propertyName name of the property to check

@@ -2,6 +2,7 @@
  * Copyright dhayman 2024 https://github.com/d-hayman/Warehome
  */
 import { useState, createContext } from "react";
+import { Outlet, useSearchParams } from "react-router-dom";
 
 interface SearchContextValue {
     searchQuery: string;
@@ -19,8 +20,9 @@ const SearchContext = createContext({} as SearchContextValue);
  * @param param0 
  * @returns 
  */
-const SearchProvider = ({ children }:{children:any}) => {
-    const [searchQuery, setSearchQuery] = useState('');
+const SearchProvider = () => {
+    const [searchParams] = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(searchParams.get("q")||'');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   
@@ -54,7 +56,7 @@ const SearchProvider = ({ children }:{children:any}) => {
         selectedCategories, emitCategories, 
         selectedSubcategories, emitSubcategories, 
       }}>
-          {children}
+          <Outlet/>
       </SearchContext.Provider>
     );
   };

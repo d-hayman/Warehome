@@ -14,6 +14,7 @@ import { SearchContext } from "../../components/providers/SearchProvider";
 import { Tooltip } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
 import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
+import { ObjectToValidParams } from "../../shared/utils/queryStringHelper";
 
 
 /**
@@ -31,6 +32,7 @@ function DashboardPage(){
     const [page, setPage] = useState(initialPageFromURL);
     const [itemsPerPage, setItemsPerPage] = useState(24);
     const [totalItems, setTotalItems] = useState(0);
+    const [hasLoaded, setHasLoaded] = useState(false);
 
     const {searchQuery, selectedCategories, selectedSubcategories} = useContext(SearchContext);
 
@@ -41,7 +43,6 @@ function DashboardPage(){
      */
     const loadItems = async () => {
         try{
-            setSearchParams({page: page, q: searchQuery} as unknown as URLSearchParams);
             let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories);
             if(data.items){
                 const items = [];
@@ -56,6 +57,8 @@ function DashboardPage(){
                 if(page > 1 && items.length == 0){
                     setPage(1);
                 }
+
+                setHasLoaded(true);
             }
         
         } catch(e) {
@@ -63,17 +66,34 @@ function DashboardPage(){
         }
     }
 
-    // effect for item fetching - refetch on page change
+    // effect for item fetching - refetch on params change
     useEffect(() => {
         loadItems();
-    }, [page]);
+    }, [searchParams]);
+
+    // 
+    useEffect(() => {
+        setSearchParams(
+            ObjectToValidParams({
+                page: page, 
+                q: searchQuery,
+                categories: selectedCategories,
+                subcategories: selectedSubcategories
+            }) as unknown as URLSearchParams);
+    }, [page])
 
     // effect for item fetching - refetch when search is submitted, on category selection
     useEffect(() => {
-        if(page > 1){
+        if(page > 1 && hasLoaded){
             setPage(1); //loadItems called by page change effect
         } else {
-            loadItems();
+            setSearchParams(
+                ObjectToValidParams({
+                    page: page, 
+                    q: searchQuery,
+                    categories: selectedCategories,
+                    subcategories: selectedSubcategories
+                }) as unknown as URLSearchParams);
         }
     }, [searchQuery, selectedCategories, selectedSubcategories]);
 

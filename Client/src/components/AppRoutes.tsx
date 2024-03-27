@@ -18,6 +18,7 @@ import AdminRolesEdit from '../features/admin/AdminRolesEdit';
 import ValidateRoute from './ValidateRoute';
 import ItemPage from '../features/dashboard/ItemPage';
 import ContainerPage from '../features/dashboard/ContainerPage';
+import { SearchProvider } from './providers/SearchProvider';
 
 /**
  * Returns the appropriate "page" based on the path in the addressbar
@@ -30,6 +31,7 @@ function AppRoutes() {
             <Route path="/signup" element={<SignupPage/>}/>
 
             <Route element={<ValidateRoute/>}>
+            <Route element={<SearchProvider/>}>
             <Route element={<NavBar/>}>
                 <Route element={<LeftNav/>}>
                     <Route path="/dashboard" element={<DashboardPage/>}/>
@@ -48,6 +50,7 @@ function AppRoutes() {
                     <Route path="/admin/roles/:id" element={<AdminRolesEdit/>}/>
                 </Route>
                 </Route>
+            </Route>
             </Route>
             </Route>
         </Routes>
