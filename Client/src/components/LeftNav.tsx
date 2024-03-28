@@ -107,7 +107,7 @@ function CategoryNav({categoryData}:{categoryData:CategoryModel}) {
       if(data.subcategories){
         const subcategories = [];
         for(const s of data.subcategories){
-          subcategories.push(SubcategoryModel.buildSubcategoryData(s));
+          subcategories.push(SubcategoryModel.buildSubcategoryData(s, categoryData.name));
         }
 
         setSubcategories(subcategories);
@@ -133,15 +133,18 @@ function CategoryNav({categoryData}:{categoryData:CategoryModel}) {
 
   /**
    * adds or removes a selected subcategory
-   * @param id subcategory id to add or remove
+   * @param subcategory subcategory to add or remove
    * @returns void
    */
-  const subcategoryCheck = (id: string) => {
-    if(selectedSubcategories.includes(id)){
-      emitSubcategories(selectedSubcategories.filter((s) => s != id));
+  const subcategoryCheck = (subcategory: SubcategoryModel) => {
+    const subs = selectedSubcategories.filter((s) => s.id == subcategory.id);
+    if(subs.length > 0){
+      emitSubcategories(selectedSubcategories.filter((s) => s.id != subcategory.id));
       return;
     } 
-    emitSubcategories([...selectedSubcategories, id]);
+    // bake the category name into the sub name of the selection data to simplify chip display logic later
+    emitSubcategories([...selectedSubcategories, {...subcategory,
+      name:`${subcategory.categoryName ? subcategory.categoryName + " - ": ""}${subcategory.name}`}]);
   }
 
   return (
@@ -172,8 +175,8 @@ function CategoryNav({categoryData}:{categoryData:CategoryModel}) {
                     <Checkbox
                       id={""+subcategory.id}
                       value={""+subcategory.id}
-                      checked={selectedSubcategories.includes(""+subcategory.id)}
-                      onClick={(e) => {e.preventDefault(); subcategoryCheck(""+subcategory.id)}}
+                      checked={!!selectedSubcategories.find(s=> s.id == subcategory.id)}
+                      onClick={(e) => {e.preventDefault(); subcategoryCheck(subcategory)}}
                     />
                   }
                 />

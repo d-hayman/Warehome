@@ -11,10 +11,11 @@ import { fetchAllItems } from "../../shared/services/items.service";
 import { ItemModel } from "../../shared/models/item.model";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { SearchContext } from "../../components/providers/SearchProvider";
-import { Tooltip } from "@mui/material";
+import { Chip, Tooltip } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
 import { displayModes, useDisplayModeToggle } from "../../shared/hooks/DisplayMode";
 import { ObjectToValidParams } from "../../shared/utils/queryStringHelper";
+import { SubcategoryModel } from "../../shared/models/categories/subcategory.model";
 
 
 /**
@@ -45,7 +46,7 @@ function DashboardPage(){
      */
     const loadItems = async () => {
         try{
-            let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories, orderBy);
+            let data = await fetchAllItems(page, searchQuery, selectedCategories, selectedSubcategories.map(s=>s.id), orderBy);
             if(data.items){
                 const items = [];
                 for(const i of data.items){
@@ -80,7 +81,7 @@ function DashboardPage(){
                 p: page, 
                 q: searchQuery,
                 c: selectedCategories,
-                s: selectedSubcategories,
+                s: SubcategoryModel.getSubcategoriesMapping(selectedSubcategories),
                 b: orderBy
             }) as unknown as URLSearchParams);
     }, [page])
@@ -95,7 +96,7 @@ function DashboardPage(){
                     p: page, 
                     q: searchQuery,
                     c: selectedCategories,
-                    s: selectedSubcategories,
+                    s: SubcategoryModel.getSubcategoriesMapping(selectedSubcategories),
                     b: orderBy
                 }) as unknown as URLSearchParams);
         }
@@ -139,6 +140,15 @@ function DashboardPage(){
                         totalItems={totalItems}
                         onPageChange={handlePageChange}
                     />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs={12}>
+                    {selectedSubcategories
+                        .sort((a,b) => a.name.localeCompare(b.name))
+                        .map((subcategory:SubcategoryModel) => (
+                            <Chip key={subcategory.id} label={subcategory.name} className="ms-1 me-1"/>
+                        ))}
                 </Col>
             </Row>
             <Row>

@@ -3,14 +3,15 @@
  */
 import { useState, createContext } from "react";
 import { Outlet, useSearchParams } from "react-router-dom";
+import { SubcategoryModel } from "../../shared/models/categories/subcategory.model";
 
 interface SearchContextValue {
     searchQuery: string;
     emitSearch: (query: string) => void;
     selectedCategories: string[];
     emitCategories: (categories: string[]) => void;
-    selectedSubcategories: string[];
-    emitSubcategories: (categories: string[]) => void;
+    selectedSubcategories: SubcategoryModel[];
+    emitSubcategories: (categories: SubcategoryModel[]) => void;
 }
 
 const SearchContext = createContext({} as SearchContextValue);
@@ -24,7 +25,7 @@ const SearchProvider = () => {
     const [searchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("q")||'');
     const [selectedCategories, setSelectedCategories] = useState<string[]>(searchParams.getAll("c"));
-    const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>(searchParams.getAll("s"));
+    const [selectedSubcategories, setSelectedSubcategories] = useState<SubcategoryModel[]>(SubcategoryModel.getSubcategoriesFromMapping(searchParams.get("s")));
   
     /**
      * Updates the search query and handles other applicable logic
@@ -46,7 +47,7 @@ const SearchProvider = () => {
      * Updates the subcategory selection
      * @param subcategories 
      */
-    const emitSubcategories = (subcategories:string[]) => {
+    const emitSubcategories = (subcategories:SubcategoryModel[]) => {
       setSelectedSubcategories(subcategories);
     };
   
